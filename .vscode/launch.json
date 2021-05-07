@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Window",
+            "request": "launch",
+            "mainClass": "com.shich.game.Window",
+            "projectName": "Game_d921a0a"
+        }
+    ]
+}
