@@ -25,7 +25,6 @@ public class Player extends Entity {
 
     protected double maxHeight;
 
-    //
     // jumps
     protected double jumpDist, jumpHeight, jumpVel;
     protected double gravity;

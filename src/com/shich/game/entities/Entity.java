@@ -9,35 +9,27 @@ import java.awt.Graphics;
 
 public abstract class Entity {
 
-    public static int scale = 32;
+    private static int scale = 32;
 
     protected static ArrayList<Entity> allEntities = new ArrayList<Entity>();
 
-    protected double x, y, width, height;
+    public double x, y, width, height;
     protected Image img;
 
-    public Entity(int x, int y, int width, int height) {
+    public Entity(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
     }
 
-    public Entity(int x, int y) {
+    public Entity(double x, double y) {
         this(x, y, 0, 0);
     }
 
-    protected void loadImage(String file) {
+    public void loadImage(String file) {
         ImageIcon ii = new ImageIcon(file);
         img = ii.getImage();
-    }
-
-    public double distance(double nx, double ny) {
-        return Math.pow(Math.pow((x - nx), 2) + Math.pow((y - ny), 2), 0.5);
-    }
-
-    public double distance(Entity e) {
-        return distance(e.x, e.y);
     }
 
     public void update() {
@@ -48,16 +40,8 @@ public abstract class Entity {
         g.drawImage(img, toInt(x * scale) + xOffset, toInt(-y * scale) + yOffset, null);
     }
 
-    public Image getImage() {
-        return img;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
+    public void render(Graphics g) {
+        render(g, 0, 0);
     }
 
     public int toInt(double num) {

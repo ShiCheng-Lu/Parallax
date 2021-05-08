@@ -46,10 +46,10 @@ public class PlayState extends GameState {
     public void render(Graphics g) {
         player.drawHUD(g);
         // relatives renders:
-        camX = 640 - (int) (player.getX() * 32);
-        camY = 480 + (int) (player.getY() * 32);
+        camX = 640 - (int) (player.x * 32);
+        camY = 480 + (int) (player.x * 32);
 
         player.render(g);
-        level.render(g, camX, camY, player.getX(), player.getY());
+        level.render(g, camX, camY, player.x, player.x);
     }
 }
