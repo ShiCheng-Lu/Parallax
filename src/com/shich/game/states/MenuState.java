@@ -8,14 +8,22 @@ import com.shich.game.util.MouseHandler;
 
 public class MenuState extends GameState {
 
+    Button title;
+
     Button enterPlayState;
     Button enterCreateState;
 
     public MenuState(GameStateManager gsm) {
         super(gsm);
         //TODO Auto-generated constructor stub
-        enterPlayState = new Button(new Rectangle(518, 200, 500, 100));
-        enterCreateState = new Button(new Rectangle(518, 350, 500, 100));
+        title = new Button(new Rectangle(268, 100, 1000, 300));
+        title.loadImage("src/com/shich/game/graphics/menu/title.png");
+
+        enterPlayState = new Button(new Rectangle(518, 450, 500, 100));
+        enterPlayState.loadImage("src/com/shich/game/graphics/menu/playButton.png");
+
+        enterCreateState = new Button(new Rectangle(518, 550, 500, 100));
+        enterCreateState.loadImage("src/com/shich/game/graphics/menu/levelEditorButton.png");
     }
 
     @Override
@@ -41,8 +49,8 @@ public class MenuState extends GameState {
     @Override
     public void render(Graphics g) {
         // TODO Auto-generated method stub
+        title.render(g, false);
         enterPlayState.render(g);
         enterCreateState.render(g);
     }
-    
 }

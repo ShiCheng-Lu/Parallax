@@ -22,7 +22,8 @@ public abstract class GameState {
         public Button(Shape shape) {
             this.shape = shape;
             clicked = false;
-            
+            x = shape.getBounds().x;
+            y = shape.getBounds().y;
         }
 
         public void loadImage(String file) {
@@ -45,13 +46,19 @@ public abstract class GameState {
             return false;
         }
 
-        public void render(Graphics g) {
+        public void render(Graphics g, boolean outline) {
             g.drawImage(img, x, y, null);
             Graphics2D g2d = (Graphics2D) g;
-            g2d.draw(shape);
+            if (outline) {
+                g2d.draw(shape);
+            }
             if (toggle) {
                 g2d.fill(shape);
             }
+        }
+
+        public void render(Graphics g) {
+            render(g, true);
         }
     }
 

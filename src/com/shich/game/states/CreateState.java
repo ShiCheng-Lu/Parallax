@@ -91,8 +91,6 @@ public class CreateState extends GameState {
         
         saveButton = new Button(new Rectangle(500, 50, 150, 50));
         saveButton.loadImage("src/com/shich/game/graphics/menu/saveButton.png");
-        saveButton.x = 500;
-        saveButton.y = 50;
 
         Rectangle outDisplay = new Rectangle(700, 0, 25 * 32, 25 * 32);
 
