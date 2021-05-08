@@ -15,7 +15,7 @@ public class MenuState extends GameState {
 
     public MenuState(GameStateManager gsm) {
         super(gsm);
-        //TODO Auto-generated constructor stub
+        
         title = new Button(new Rectangle(268, 100, 1000, 300));
         title.loadImage("src/com/shich/game/graphics/menu/title.png");
 
@@ -28,14 +28,12 @@ public class MenuState extends GameState {
 
     @Override
     public void input(KeyHandler key, MouseHandler mouse) {
-        // TODO Auto-generated method stub
         enterPlayState.input(key, mouse);
         enterCreateState.input(key, mouse);
     }
 
     @Override
     public void update() {
-        // TODO Auto-generated method stub
         if (enterPlayState.clicked()) {
             gsm.remove(0);
             gsm.addState(new PlayState(gsm));
@@ -48,7 +46,6 @@ public class MenuState extends GameState {
 
     @Override
     public void render(Graphics g) {
-        // TODO Auto-generated method stub
         title.render(g, false);
         enterPlayState.render(g);
         enterCreateState.render(g);
