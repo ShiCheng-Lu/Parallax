@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Level {
+    public String name;
     public int layerNum;
     public List<Layer> layers;
 
@@ -115,6 +116,7 @@ public class Level {
             }
             
             fileReader.close();
+            this.name = name;
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

@@ -17,7 +17,7 @@ public class KeyHandler extends KeyAdapter {
     public Key action = new Key(KeyEvent.VK_SPACE);
     public Key pause = new Key(KeyEvent.VK_ESCAPE);
     public Key dash = new Key(KeyEvent.VK_L);
-    public Key jump = new Key(KeyEvent.VK_SPACE);
+    public Key jump = new Key(KeyEvent.VK_K);
 
     public KeyHandler(GamePanel game) {
         game.addKeyListener(this);

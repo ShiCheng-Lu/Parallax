@@ -11,14 +11,18 @@ import com.shich.game.util.KeyHandler;
 import com.shich.game.util.MouseHandler;
 
 public abstract class GameState {
-
+    
     public class Button {
         protected Shape shape;
         protected boolean clicked;
         public boolean toggle;
         public int x, y;
-        public Image img;
+        public Image img, imgClicked;
 
+        /**
+         * Create a button that with the shape
+         * @param shape
+         */
         public Button(Shape shape) {
             this.shape = shape;
             clicked = false;
@@ -26,11 +30,25 @@ public abstract class GameState {
             y = shape.getBounds().y;
         }
 
-        public void loadImage(String file) {
+        /**
+         * load an image as the button
+         * @param file the path to a file
+         */
+        public void loadImage(String file, String fileClicked) {
             ImageIcon ii = new ImageIcon(file);
             img = ii.getImage();
+            ImageIcon iiClicked = new ImageIcon(fileClicked);
+            imgClicked = iiClicked.getImage();
+        }
+        public void loadImage(String file) {
+            loadImage(file, file);
         }
 
+        /**
+         * handles inputs from user
+         * @param key key inputs
+         * @param mouse mouse inputs
+         */
         public void input(KeyHandler key, MouseHandler mouse) {
             if (shape.contains(mouse.x, mouse.y) && mouse.left.clicked()) {
                 clicked = true;
@@ -38,6 +56,10 @@ public abstract class GameState {
             }
         }
 
+        /**
+         * check if this button was clicked
+         * @return true if the button was clicked
+         */
         public boolean clicked() {
             if (clicked) {
                 clicked = false;
@@ -46,6 +68,11 @@ public abstract class GameState {
             return false;
         }
 
+        /**
+         * display the button on screen
+         * @param g graphic to display the button on
+         * @param outline optional, if true, a outline of the button shape will be drawn
+         */
         public void render(Graphics g, boolean outline) {
             g.drawImage(img, x, y, null);
             Graphics2D g2d = (Graphics2D) g;
@@ -56,7 +83,6 @@ public abstract class GameState {
                 g2d.fill(shape);
             }
         }
-
         public void render(Graphics g) {
             render(g, true);
         }

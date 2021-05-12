@@ -127,7 +127,7 @@ public class CreateState extends GameState {
         player.drawHUD(g);
         // relatives renders:
 
-        player.render(g, 700, 770);
+        player.render(g);
 
         for (LayerInputs layer : layerInputs) {
             layer.render(g);

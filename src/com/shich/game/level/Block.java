@@ -6,6 +6,8 @@ public class Block extends Entity {
 
     public static int SOLID = 0;
     public static int SEMISOLID = 1;
+    public static int WIN = 2;
+    
     public static int scale = 32;
     
     private int type;
@@ -19,10 +21,10 @@ public class Block extends Entity {
             loadImage("src/com/shich/game/graphics/block.png");
         } else if (type == Block.SEMISOLID) {
             loadImage("src/com/shich/game/graphics/platform.png");
+        } else if (type == Block.WIN) {
+            // loadImage("src/com/")
         }
     }
-
-
 
 	public int type() {
 		return type;

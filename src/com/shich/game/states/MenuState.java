@@ -36,7 +36,9 @@ public class MenuState extends GameState {
     public void update() {
         if (enterPlayState.clicked()) {
             gsm.remove(0);
-            gsm.addState(new PlayState(gsm));
+            PlayState ps = new PlayState(gsm);
+            ps.loadLevel("selector");
+            gsm.addState(ps);
         }
         if (enterCreateState.clicked()) {
             gsm.remove(0);

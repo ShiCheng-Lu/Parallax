@@ -39,7 +39,7 @@ public class Layer {
                 }
             }
         }
-        g.drawRect(camX, camY - (height - 1) * 32, width * 32, height * 32);
+        // g.drawRect(camX, camY - (height - 1) * 32, width * 32, height * 32);
     }
 
     public Block collision(int x, int y) {
