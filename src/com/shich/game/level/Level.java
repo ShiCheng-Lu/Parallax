@@ -18,16 +18,16 @@ public class Level {
         layerNum = 4;
         layers = new ArrayList<Layer>();
 
-        layers.add(new Layer(25, 25));
-        layers.add(new Layer(13, 13));
-        layers.add(new Layer(9, 9));
-        layers.add(new Layer(7, 7));
+        layers.add(new Layer(25, 25, 1));
+        layers.add(new Layer(13, 13, 2));
+        layers.add(new Layer(9, 9, 3));
+        layers.add(new Layer(7, 7, 4));
     }
 
     public void render(Graphics g, double pX, double pY) {
         for (int i = layerNum - 1; i >= 0; --i) {
-            int xOffset = (int) (pX * 32 * i / (i + 1));
-            int yOffset = (int) (pY * 32 * i / (i + 1));
+            int xOffset = (int) Math.round(pX * 32 * i / (i + 1));
+            int yOffset = (int) Math.round(pY * 32 * i / (i + 1));
             layers.get(i).render(g, xOffset, -yOffset);
         }
     }
@@ -36,8 +36,8 @@ public class Level {
         if (x < 0 || x > 24 || y < 0 || y > 24) {
             return true;
         }
-        for (int i = 0; i < layerNum; ++i) {
-            if (layers.get(i).checkCollide(x / (i + 1), y / (i + 1), width, height)) {
+        for (Layer layer : layers) {
+            if (layer.checkCollide(x, y, width, height)) {
                 return true;
             }
         }
@@ -50,7 +50,7 @@ public class Level {
 
     public void remove(int layer, int x, int y) {
         if (layer >= 0 && layer < layerNum) {
-            layers.get(layer).remove(x, y);
+            layers.get(layer).set(x, y, Block.AIR);
         }
     }
 
@@ -65,14 +65,14 @@ public class Level {
             String output = "";
 
             for (Layer layer : layers) {
-                output += layer.width + " " + layer.height + " ";
+                // encode layer definitions
+                output += layer.width + " ";
+                output += layer.height + " ";
+                output += layer.movementMod + " ";
+                // encode layer datad
                 for (int x = 0; x < layer.width; ++x) {
                     for (int y = 0; y < layer.height; ++y) {
-                        if (layer.get(x, y) != null) {
-                            output += '1';
-                        } else {
-                            output += '0';
-                        }
+                        output += layer.get(x, y).type;
                     }
                 }
                 output += '\n';
@@ -99,8 +99,9 @@ public class Level {
             while (fileReader.hasNextLine()) {
                 int width = fileReader.nextInt();
                 int height = fileReader.nextInt();
+                int movementMod = fileReader.nextInt();
                 String data = fileReader.nextLine().strip();
-                Layer layer = new Layer(width, height);
+                Layer layer = new Layer(width, height, movementMod);
 
                 int index = 0;
                 for (int x = 0; x < width; ++x) {

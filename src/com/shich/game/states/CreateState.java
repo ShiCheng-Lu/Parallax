@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 
 import com.shich.game.entities.Player;
 import com.shich.game.level.Block;
+import com.shich.game.level.Layer;
 import com.shich.game.level.Level;
 import com.shich.game.util.KeyHandler;
 import com.shich.game.util.MouseHandler;
@@ -16,17 +17,18 @@ public class CreateState extends GameState {
     private Level level;
     private LayerInputs[] layerInputs;
     private Button saveButton, loadButton;
-    
+
     private class LayerInputs {
-        private int width, height, layer;
+        private Layer layer;
+        private int width, height;
         public Rectangle display, outDisplay;
         private Button[][] inputs;
 
-        public LayerInputs(int width, int height, Rectangle display, int layer, Rectangle outDisplay) {
-            this.width = width;
-            this.height = height;
+        public LayerInputs(Layer layerBase, Rectangle display, Rectangle outDisplay) {
+            this.width = layerBase.width;
+            this.height = layerBase.height;
             this.inputs = new Button[width][height];
-            this.layer = layer;
+            this.layer = layerBase;
             this.outDisplay = outDisplay;
 
             int xStart = display.x;
@@ -38,13 +40,12 @@ public class CreateState extends GameState {
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
                     inputs[x][y] = new Button(new Rectangle(xStart + xSize * x, yStart + ySize * y, xSize, ySize));
+                    if (layer.get(x, y).type != Block.AIR) {
+                        inputs[x][y].toggle = true;
+                    }
                 }
             }
         }
-
-        public LayerInputs(int size, int layer, Rectangle display, Rectangle outDisplay) {
-            this(size, size, display, layer, outDisplay);
-        }        
 
         public void input(KeyHandler key, MouseHandler mouse) {
             for (int x = 0; x < width; ++x) {
@@ -57,12 +58,13 @@ public class CreateState extends GameState {
         public void update() {
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
+                    char type;
                     if (inputs[x][y].toggle) {
-                        level.set(layer, x, width - y - 1, Block.SOLID);
+                        type = Block.SOLID;
                     } else {
-                        level.remove(layer, x, width - y - 1);
+                        type = Block.AIR;
                     }
-
+                    layer.set(x, width - y - 1, type);
                 }
             }
         }
@@ -75,7 +77,10 @@ public class CreateState extends GameState {
                     inputs[x][y].render(g);
 
                     if (inputs[x][y].toggle) {
-                        Rectangle r = new Rectangle(700 + (layer + 1) * x * 32 - 32 * layer, (layer + 1) * y * 32 - 32 * layer, (layer * 2 + 1) * 32, (layer * 2 + 1) * 32);
+                        int blockWidth = (layer.movementMod * 2 - 1) * 32;
+
+                        Rectangle r = new Rectangle(700 + 32 * (layer.movementMod * (x - 1) + 1),
+                                32 * (layer.movementMod * (y - 1) + 1), blockWidth, blockWidth);
 
                         g2d.fill(outDisplay.intersection(r));
                     }
@@ -89,17 +94,17 @@ public class CreateState extends GameState {
 
         level = new Level();
         player = new Player("bob", 0, 0, level);
-        
+
         saveButton = new Button(new Rectangle(500, 50, 150, 50));
         saveButton.loadImage("src/com/shich/game/graphics/menu/saveButton.png");
 
         Rectangle outDisplay = new Rectangle(700, 0, 25 * 32, 25 * 32);
 
         layerInputs = new LayerInputs[4];
-        layerInputs[0] = new LayerInputs(25, 0, new Rectangle(700, 0, 25 * 32, 25 * 32), outDisplay);
-        layerInputs[1] = new LayerInputs(13, 1, new Rectangle(20, 20, 13 * 32, 13 * 32), outDisplay);
-        layerInputs[2] = new LayerInputs(9, 2, new Rectangle(20, 480, 9 * 32, 9 * 32), outDisplay);
-        layerInputs[3] = new LayerInputs(7, 3, new Rectangle(350, 480, 7 * 32, 7 * 32), outDisplay);
+        layerInputs[0] = new LayerInputs(level.layers.get(0), new Rectangle(700, 0, 25 * 32, 25 * 32), outDisplay);
+        layerInputs[1] = new LayerInputs(level.layers.get(1), new Rectangle(20, 20, 13 * 32, 13 * 32), outDisplay);
+        layerInputs[2] = new LayerInputs(level.layers.get(2), new Rectangle(20, 480, 9 * 32, 9 * 32), outDisplay);
+        layerInputs[3] = new LayerInputs(level.layers.get(3), new Rectangle(350, 480, 7 * 32, 7 * 32), outDisplay);
     }
 
     @Override

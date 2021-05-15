@@ -4,34 +4,34 @@ import com.shich.game.entities.Entity;
 
 public class Block extends Entity {
 
-    public static char AIR = '.';
+    public static char AIR = 'a';
     public static char SOLID = '1';
-    public static char WIN = '2';
+    public static char SEMISOLID = '2';
+    public static char WIN = '8';
     public static char SELECT = '9';
+
+    public static String knownTypes = ".1289";
     
     public static int scale = 32;
     
-    private int type;
+    public char type;
 
     public Block(int x, int y, char type) {
         super(x, y, scale, scale);
 
-        this.type = type;
-
-        String blockName = "empty";
-        if (type == Block.SOLID) {
-            blockName = "block";
-        } else if (type == Block.WIN) {
-            // loadImage("src/com/")
-        } else if (type == Block.SELECT) {
-            blockName = "selectBlock";
-        } else {
-            
-        }
-        loadImage("src/com/shich/game/graphics/" + blockName + ".png");
+        setType(type);
     }
 
-	public int type() {
-		return type;
-	}
+    public void setType(char type) {
+        if (knownTypes.indexOf(type) == -1) {
+            type = Block.AIR;
+        }
+
+        this.type = type;
+        loadImage("src/com/shich/game/graphics/block/block-" + type + ".png");
+    }
+
+    public char getType() {
+        return type;
+    }
 }

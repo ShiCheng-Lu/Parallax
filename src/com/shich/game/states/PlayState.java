@@ -31,10 +31,8 @@ public class PlayState extends GameState {
         player.input(key, mouse);
 
         if (key.action.clicked() && level.name == "selector") {
-            int pos = (int) player.x;
-            if (((int) player.x) % 4 == 0) {
-                String newLevel = "level" + pos / 4;
-                loadLevel(newLevel);
+            if (level.name == "selector" && selectedLevel >= 0) {
+                loadLevel("level-" + selectedLevel);
             }
         }
     }
@@ -69,7 +67,11 @@ public class PlayState extends GameState {
         level.render(g, player.x, player.y);
 
         if (level.name == "selector" && selectedLevel >= 0) {
-            g.drawString("level" + selectedLevel, (int) Math.round((player.x + 3) * 32 * 3 / 4), -10);
+            g.drawString("level-" + selectedLevel, (int) Math.round((player.x + 3) * 32 * 3 / 4), -10);
         }
+    }
+
+    public void transition(Graphics g, int centetX, int centerY) {
+        
     }
 }
