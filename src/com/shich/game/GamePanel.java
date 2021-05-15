@@ -27,6 +27,7 @@ public class GamePanel extends JPanel implements Runnable {
         setPreferredSize(new Dimension(width, height));
         setFocusable(true);
         requestFocus();
+        init();
     }
 
     @Override
@@ -45,8 +46,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void init() {
-        running = true;
-
         gameStateManager = new GameStateManager(this);
         key = new KeyHandler(this);
         mouse = new MouseHandler(this);
@@ -54,7 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        init();
+        running = true;
 
         final long TPS = 60;
         final long MSPT = (long) Math.pow(10, 9) / TPS; // MilliSecond Per Tick
@@ -67,14 +66,15 @@ public class GamePanel extends JPanel implements Runnable {
         while (running) {
             now = System.nanoTime();
 
+            input();
             update();
             repaint();
-            input();
 
             frameCounter++;
 
             if (frameCounter % 60 == 0) { // show FPS
-                System.out.println((now - lastSecond) + ", " + frameCounter + ", " + HEIGHT + ", " + width);
+                System.out.println((now - lastSecond) / Math.pow(10, 9));
+                lastSecond = System.nanoTime();
             }
 
             timeDiff = System.nanoTime() - now;
@@ -98,6 +98,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void input() {
         gameStateManager.input(this.key, this.mouse);
 
-        mouse.left.clicked();
+        this.key.reset_clicks(); // reset key clicks
+        this.mouse.reset_clicks(); // reset left click, no lingering clicks
     }
 }
