@@ -86,4 +86,10 @@ public class MouseHandler extends MouseAdapter {
         x = e.getX();
         y = e.getY();
     }
+
+    public void reset_clicks() {
+        left.clicked();
+        middle.clicked();
+        right.clicked();
+    }
 }

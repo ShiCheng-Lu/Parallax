@@ -80,4 +80,9 @@ public class KeyHandler extends KeyAdapter {
 
         keys.get(key).toggle(false);
     }
+
+    public void reset_clicks() {
+        keys.forEach((k, v) -> v.clicked());
+    }
+
 }

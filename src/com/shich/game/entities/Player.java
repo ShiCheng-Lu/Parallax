@@ -174,7 +174,7 @@ public class Player extends Entity {
     }
 
     public void render(Graphics g) {
+        super.render(g);
         g.drawRect(640, 480, 32, 32);
-        g.drawImage(img, 640, 480, null);
     }
 }

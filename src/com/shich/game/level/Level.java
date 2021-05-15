@@ -24,11 +24,11 @@ public class Level {
         layers.add(new Layer(7, 7));
     }
 
-    public void render(Graphics g, int camX, int camY, double pX, double pY) {
+    public void render(Graphics g, double pX, double pY) {
         for (int i = layerNum - 1; i >= 0; --i) {
             int xOffset = (int) (pX * 32 * i / (i + 1));
             int yOffset = (int) (pY * 32 * i / (i + 1));
-            layers.get(i).render(g, camX + xOffset, camY - yOffset);
+            layers.get(i).render(g, xOffset, -yOffset);
         }
     }
 
@@ -44,8 +44,8 @@ public class Level {
         return false;
     }
 
-    public void set(int layer, int x, int y) {
-        layers.get(layer).set(x, y);
+    public void set(int layer, int x, int y, char type) {
+        layers.get(layer).set(x, y, type);
     }
 
     public void remove(int layer, int x, int y) {
@@ -56,7 +56,7 @@ public class Level {
 
     public void save(String name) {
         try {
-            String filePath = "./levels/" + name + ".txt";
+            String filePath = "src/com/shich/game/level/levels/" + name + ".txt";
             File file = new File(filePath);
             file.createNewFile();
 
@@ -92,7 +92,7 @@ public class Level {
             layerNum = 0;
             layers = new ArrayList<Layer>();
 
-            String filePath = "./levels/" + name + ".txt";
+            String filePath = "src/com/shich/game/level/levels/" + name + ".txt";
             File file = new File(filePath);
             Scanner fileReader = new Scanner(file);
 
@@ -105,9 +105,7 @@ public class Level {
                 int index = 0;
                 for (int x = 0; x < width; ++x) {
                     for (int y = 0; y < height; ++y) {
-                        if (data.charAt(index) == '1') {
-                            layer.set(x, y);
-                        }
+                        layer.set(x, y, data.charAt(index));
                         index++;
                     }
                 }

@@ -12,9 +12,9 @@ public class Layer {
         tiles = new Block[width][height];
     }
 
-    public void set(int x, int y) {
+    public void set(int x, int y, char type) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            tiles[x][y] = new Block(x, y, 0);
+            tiles[x][y] = new Block(x, y, type);
         }
     }
 
@@ -31,11 +31,11 @@ public class Layer {
         return null;
     }
 
-    public void render(Graphics g, int camX, int camY) {
+    public void render(Graphics g, int xOffset, int yOffset) {
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 if (tiles[x][y] != null) {
-                    tiles[x][y].render(g, camX, camY);
+                    tiles[x][y].render(g, xOffset, yOffset);
                 }
             }
         }
@@ -52,7 +52,7 @@ public class Layer {
     public boolean checkCollide(double x, double y, double width, double height) {
         for (int tx = (int) Math.floor(x); tx < (int) Math.ceil(x + width); ++tx) {
             for (int ty = (int) Math.floor(y); ty < (int) Math.ceil(y + height); ++ty) {
-                if (collision(tx, ty) != null) {
+                if (collision(tx, ty).type() == Block.SOLID) {
                     return true;
                 }
             }

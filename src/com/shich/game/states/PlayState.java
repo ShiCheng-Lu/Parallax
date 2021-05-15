@@ -11,6 +11,7 @@ public class PlayState extends GameState {
 
     private Player player;
     private Level level;
+    private int selectedLevel;
 
     private int camX = 0;
     private int camY = 0;
@@ -38,57 +39,37 @@ public class PlayState extends GameState {
         }
     }
 
-    // private void adjustCamera() {
-    // double camTrackSpeed = 0.3;
-    // int targetX = -(int) player.getX() + 640;
-    // int targetY = (int) player.getY() + 360;
-
-    // camX = (int) (camX + (targetX - camX) * camTrackSpeed);
-    // camY = (int) (camY + (targetY - camY) * camTrackSpeed);
-    // }
-
     @Override
     public void update() {
         player.update();
+
+        // level selector
+        if (level.name == "selector") {
+            // find the closest multiple of 4
+            int closestLevel = (int) Math.round(player.x / 4);
+            // check if it is within 1.3 of player position
+            if (Math.abs(player.x - closestLevel * 4) < 0.8) {
+                selectedLevel = closestLevel;
+            } else {
+                selectedLevel = -1;
+            }
+        }
     }
 
     @Override
     public void render(Graphics g) {
         player.drawHUD(g);
         // relatives renders:
-        camX = (int) (player.x * 32);
-        camY = (int) (-player.y * 32);
+        camX = (int) Math.round(player.x * 32);
+        camY = (int) Math.round(player.y * 32);
 
-        g.translate(camX, camY);
+        g.translate(1536 / 2 - camX, 800 / 2 + 200 + camY);
 
         player.render(g);
-        level.render(g, camX, camY, player.x, player.y);
+        level.render(g, player.x, player.y);
 
-        if (level.name == "selector") {
-            switch ((int) Math.round(player.x)) {
-                case 0:
-                    g.drawString("level 1", 500, 500);
-                    break;
-                case 4:
-                    g.drawString("level 2", 500, 500);
-                    break;
-                case 8:
-                    g.drawString("level 3", 500, 500);
-                    break;
-                case 12:
-                    g.drawString("level 4", 500, 500);
-                    break;
-                case 16:
-                    g.drawString("level 5", 500, 500);
-                    break;
-                case 20:
-                    g.drawString("level 6", 500, 500);
-                    break;
-                case 24:
-                    g.drawString("level 7", 500, 500);
-                    break;
-
-            }
+        if (level.name == "selector" && selectedLevel >= 0) {
+            g.drawString("level" + selectedLevel, (int) Math.round((player.x + 3) * 32 * 3 / 4), -10);
         }
     }
 }

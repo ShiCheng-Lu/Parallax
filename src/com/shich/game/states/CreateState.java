@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import com.shich.game.entities.Player;
+import com.shich.game.level.Block;
 import com.shich.game.level.Level;
 import com.shich.game.util.KeyHandler;
 import com.shich.game.util.MouseHandler;
@@ -57,7 +58,7 @@ public class CreateState extends GameState {
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
                     if (inputs[x][y].toggle) {
-                        level.set(layer, x, width - y - 1);
+                        level.set(layer, x, width - y - 1, Block.SOLID);
                     } else {
                         level.remove(layer, x, width - y - 1);
                     }
@@ -117,7 +118,7 @@ public class CreateState extends GameState {
             layer.update();
         }
         if (saveButton.clicked()) {
-            level.save("level" + 1);
+            level.save("temp");
             saveButton.toggle = false;
         }
     }
@@ -127,7 +128,7 @@ public class CreateState extends GameState {
         player.drawHUD(g);
         // relatives renders:
 
-        player.render(g);
+        player.render(g, 700, 768);
 
         for (LayerInputs layer : layerInputs) {
             layer.render(g);
