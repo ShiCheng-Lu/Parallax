@@ -7,27 +7,26 @@ import java.awt.Shape;
 
 import javax.swing.ImageIcon;
 
+import com.shich.game.entities.Entity;
 import com.shich.game.util.KeyHandler;
 import com.shich.game.util.MouseHandler;
 
 public abstract class GameState {
     
-    public class Button {
+    public class Button extends Entity {
         protected Shape shape;
         protected boolean clicked;
         public boolean toggle;
-        public int x, y;
-        public Image img, imgClicked;
+        public Image imgClicked;
 
         /**
          * Create a button that with the shape
          * @param shape
          */
         public Button(Shape shape) {
+            super(shape.getBounds().x, shape.getBounds().y);
             this.shape = shape;
             clicked = false;
-            x = shape.getBounds().x;
-            y = shape.getBounds().y;
         }
 
         /**
@@ -35,13 +34,9 @@ public abstract class GameState {
          * @param file the path to a file
          */
         public void loadImage(String file, String fileClicked) {
-            ImageIcon ii = new ImageIcon(file);
-            img = ii.getImage();
+            super.loadImage(file);
             ImageIcon iiClicked = new ImageIcon(fileClicked);
             imgClicked = iiClicked.getImage();
-        }
-        public void loadImage(String file) {
-            loadImage(file, file);
         }
 
         /**
@@ -74,7 +69,7 @@ public abstract class GameState {
          * @param outline optional, if true, a outline of the button shape will be drawn
          */
         public void render(Graphics g, boolean outline) {
-            g.drawImage(img, x, y, null);
+            super.render(g);
             Graphics2D g2d = (Graphics2D) g;
             if (outline) {
                 g2d.draw(shape);

@@ -39,10 +39,12 @@ public class CreateState extends GameState {
 
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
-                    inputs[x][y] = new Button(new Rectangle(xStart + xSize * x, yStart + ySize * y, xSize, ySize));
+                    Button tile = new Button(new Rectangle(xStart + xSize * x, yStart + ySize * y, xSize, ySize));
+                    tile.loadImage("block-..png");
                     if (layer.get(x, y).type != Block.AIR) {
-                        inputs[x][y].toggle = true;
+                        tile.toggle = true;
                     }
+                    inputs[x][y] = tile;
                 }
             }
         }
@@ -93,10 +95,11 @@ public class CreateState extends GameState {
         super(gsm);
 
         level = new Level();
+        level.load("empty");
         player = new Player("bob", 0, 0, level);
 
         saveButton = new Button(new Rectangle(500, 50, 150, 50));
-        saveButton.loadImage("src/com/shich/game/graphics/menu/saveButton.png");
+        saveButton.loadImage("menu/saveButton.png");
 
         Rectangle outDisplay = new Rectangle(700, 0, 25 * 32, 25 * 32);
 
@@ -110,8 +113,8 @@ public class CreateState extends GameState {
     @Override
     public void input(KeyHandler key, MouseHandler mouse) {
         player.input(key, mouse);
-        for (LayerInputs layer : layerInputs) {
-            layer.input(key, mouse);
+        for (LayerInputs layerInput : layerInputs) {
+            layerInput.input(key, mouse);
         }
         saveButton.input(key, mouse);
     }
@@ -119,8 +122,8 @@ public class CreateState extends GameState {
     @Override
     public void update() {
         player.update();
-        for (LayerInputs layer : layerInputs) {
-            layer.update();
+        for (LayerInputs layerInput : layerInputs) {
+            layerInput.update();
         }
         if (saveButton.clicked()) {
             level.save("temp");
@@ -135,8 +138,8 @@ public class CreateState extends GameState {
 
         player.render(g, 700, 768);
 
-        for (LayerInputs layer : layerInputs) {
-            layer.render(g);
+        for (LayerInputs layerInput : layerInputs) {
+            layerInput.render(g);
         }
         saveButton.render(g);
     }

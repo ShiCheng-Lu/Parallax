@@ -7,34 +7,13 @@ import com.shich.game.util.MouseHandler;
 import java.awt.Graphics;
 import java.awt.Color;
 
-public class Player extends Entity {
+public class Player extends Mob {
 
-    // movement
-    protected int xDir = 1;
-    protected double xVel, yVel, xAcc;
-    protected double xNew, yNew;
-    protected double xVelMax, yVelMax;
-    // dash
-    protected int dashTime, dashDist, dashCooldown;
-    protected int dashTimer = 0, dashCooldownTimer = 0;
-    protected double dashSpeed;
-    // jump
-    protected int jumpTime = 0, jumpTimer;
-    protected boolean onGround = true, jumpHeld;
-    protected int coyoteTime, coyoteTimer;
-
-    protected double maxHeight;
-
-    // jumps
-    protected double jumpDist, jumpHeight, jumpVel;
-    protected double gravity;
-
-    private Level level;
 
     public Player(String name, int x, int y, Level level) {
-        super(x, y, 1, 1);
-        loadImage("src/com/shich/game/graphics/player.png");
-        this.level = level;
+        super(x, y, 1, 1, level);
+        loadImage("player.png");
+        setRenderSetting(32, -32, 0, 0);
         //
         xVelMax = 0.15;
         yVelMax = 0.3;
@@ -46,7 +25,7 @@ public class Player extends Entity {
 
         jumpDist = 7;
         jumpHeight = 5;
-        coyoteTime = 3;
+        // coyoteTime = 3;
 
         gravity = (8 * jumpHeight * xVelMax * xVelMax) / (jumpDist * jumpDist);
         jumpVel = (4 * jumpHeight * xVelMax) / jumpDist + (gravity * 0.1); // additional tolerance
@@ -81,7 +60,7 @@ public class Player extends Entity {
         }
 
         if (key.jump.clicked()) {
-            if (onGround || coyoteTimer > 0) {
+            if (onGround) { // || coyoteTimer > 0) { coyote time, unimplemented
                 jump();
             }
         }
@@ -108,64 +87,17 @@ public class Player extends Entity {
         }
     }
 
-    private void collisionUpdateX() {
-
-        if (level.checkCollide(xNew, y, width, height)) {
-            if (xDir == 1) {
-                xNew = Math.floor(xNew);
-                xVel = 0;
-            } else {
-                xNew = Math.ceil(xNew);
-                xVel = 0;
-            }
-        }
-    }
-
-    private void collisionUpdateY() {
-
-        if (level.checkCollide(xNew, yNew, width, height)) {
-            if (yVel > 0) {
-                yNew = Math.floor(yNew);
-                yVel = 0;
-            } else {
-                yNew = Math.ceil(yNew);
-                yVel = 0;
-                onGround = true;
-                coyoteTimer = coyoteTime;
-            }
-        }
-
-        if (onGround == false && coyoteTimer > 0) {
-            coyoteTimer--;
-        }
-    }
-
     @Override
-    public void update() {
-        super.update();
-        double deltaTime = 1;
-
+    public void update() { 
+        // handels jump
         if (yVel > 0 && !jumpHeld) {
             yVel -= 2 * gravity;
         }
         if (yVel < 0) {
             onGround = false;
         }
-
         dashUpdate();
-
-        // simplified velocity verlet
-        xNew = x + xVel * xDir * deltaTime;
-        collisionUpdateX();
-        yNew = y + yVel * deltaTime - gravity * 0.5 * deltaTime * deltaTime;
-        collisionUpdateY();
-        // update to new coord
-        x = xNew;
-        y = yNew;
-        // update to velocity
-        xVel = 0;
-        yVel -= gravity * deltaTime;
-
+        super.update();
     }
 
     public void drawHUD(Graphics g) {

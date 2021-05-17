@@ -2,6 +2,8 @@ package com.shich.game.level;
 
 import java.awt.Graphics;
 
+import com.shich.game.entities.Mob;
+
 public class Layer {
     public int width, height, movementMod;
     protected Block[][] tiles;
@@ -36,7 +38,7 @@ public class Layer {
         if (x >= 0 && x < width && y >= 0 && y < height) {
             return tiles[x][y];
         }
-        return null;
+        return new Block(0, 0, Block.AIR);
     }
 
     public void render(Graphics g, int xOffset, int yOffset) {
@@ -57,13 +59,27 @@ public class Layer {
         return null;
     }
 
-    public boolean checkCollide(double x, double y, double width, double height) {
-        x /= movementMod;
-        y /= movementMod;
-        for (int tx = (int) Math.floor(x); tx < (int) Math.ceil(x + width); ++tx) {
-            for (int ty = (int) Math.floor(y); ty < (int) Math.ceil(y + height); ++ty) {
-                if (collision(tx, ty).getType() == Block.SOLID) {
-                    return true;
+    public boolean checkCollide(Mob m) {
+        double xNew = m.xNew / movementMod;
+        double yNew = m.yNew / movementMod;
+        // double x = m.x / movementMod;
+        double y = m.y / movementMod;
+
+        for (int tx = (int) Math.floor(xNew); tx < (int) Math.ceil(xNew + m.width); ++tx) {
+            for (int ty = (int) Math.floor(yNew); ty < (int) Math.ceil(yNew + m.height); ++ty) {
+                switch (collision(tx, ty).getType()) {
+                    case Block.SOLID:
+                        System.out.println("layer: " + movementMod + ", x: " + tx + ", y: " + ty);
+                        return true;
+                    case Block.SEMISOLID:
+                        if (y >= ty + 1) { // if the player starting position is above the block
+                            return true;
+                        }
+                        break;
+                    case Block.AIR:
+                        break;
+                    default:
+                        break;
                 }
             }
         }

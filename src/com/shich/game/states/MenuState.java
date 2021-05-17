@@ -17,13 +17,13 @@ public class MenuState extends GameState {
         super(gsm);
         
         title = new Button(new Rectangle(268, 100, 1000, 300));
-        title.loadImage("src/com/shich/game/graphics/menu/title.png");
+        title.loadImage("menu/title.png");
 
         enterPlayState = new Button(new Rectangle(518, 450, 500, 100));
-        enterPlayState.loadImage("src/com/shich/game/graphics/menu/playButton.png");
+        enterPlayState.loadImage("menu/playButton.png");
 
         enterCreateState = new Button(new Rectangle(518, 550, 500, 100));
-        enterCreateState.loadImage("src/com/shich/game/graphics/menu/levelEditorButton.png");
+        enterCreateState.loadImage("menu/levelEditorButton.png");
     }
 
     @Override
@@ -49,7 +49,7 @@ public class MenuState extends GameState {
     @Override
     public void render(Graphics g) {
         title.render(g, false);
-        enterPlayState.render(g);
-        enterCreateState.render(g);
+        enterPlayState.render(g, true);
+        enterCreateState.render(g, true);
     }
 }

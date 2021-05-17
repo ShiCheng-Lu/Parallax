@@ -9,19 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.shich.game.entities.Mob;
+
 public class Level {
     public String name;
     public int layerNum;
     public List<Layer> layers;
 
     public Level() {
-        layerNum = 4;
+        layerNum = 0;
         layers = new ArrayList<Layer>();
-
-        layers.add(new Layer(25, 25, 1));
-        layers.add(new Layer(13, 13, 2));
-        layers.add(new Layer(9, 9, 3));
-        layers.add(new Layer(7, 7, 4));
     }
 
     public void render(Graphics g, double pX, double pY) {
@@ -32,12 +29,14 @@ public class Level {
         }
     }
 
-    public boolean checkCollide(double x, double y, double width, double height) {
-        if (x < 0 || x > 24 || y < 0 || y > 24) {
+    public boolean checkCollide(Mob m) {
+        // level boundary check
+        if (m.xNew < 0 || m.xNew > 24 || m.yNew < 0 || m.yNew > 24) {
             return true;
         }
+        // layer collide check
         for (Layer layer : layers) {
-            if (layer.checkCollide(x, y, width, height)) {
+            if (layer.checkCollide(m)) {
                 return true;
             }
         }

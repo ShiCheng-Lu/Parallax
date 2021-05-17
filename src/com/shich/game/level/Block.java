@@ -4,11 +4,11 @@ import com.shich.game.entities.Entity;
 
 public class Block extends Entity {
 
-    public static char AIR = 'a';
-    public static char SOLID = '1';
-    public static char SEMISOLID = '2';
-    public static char WIN = '8';
-    public static char SELECT = '9';
+    public static final char AIR = 'a';
+    public static final char SOLID = '1';
+    public static final char SEMISOLID = '2';
+    public static final char WIN = '8';
+    public static final char SELECT = '9';
 
     public static String knownTypes = ".1289";
     
@@ -20,6 +20,7 @@ public class Block extends Entity {
         super(x, y, scale, scale);
 
         setType(type);
+        setRenderSetting(32, -32, 0, 0);
     }
 
     public void setType(char type) {
@@ -28,7 +29,7 @@ public class Block extends Entity {
         }
 
         this.type = type;
-        loadImage("src/com/shich/game/graphics/block/block-" + type + ".png");
+        loadImage("block/block-" + type + ".png");
     }
 
     public char getType() {
