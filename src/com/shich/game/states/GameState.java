@@ -73,9 +73,10 @@ public abstract class GameState {
             Graphics2D g2d = (Graphics2D) g;
             if (outline) {
                 g2d.draw(shape);
-            }
-            if (toggle) {
-                g2d.fill(shape);
+                
+                if (toggle) {
+                    g2d.fill(shape);
+                }
             }
         }
         public void render(Graphics g) {

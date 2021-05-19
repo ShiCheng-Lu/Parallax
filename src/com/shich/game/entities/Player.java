@@ -60,7 +60,7 @@ public class Player extends Mob {
         }
 
         if (key.jump.clicked()) {
-            if (onGround) { // || coyoteTimer > 0) { coyote time, unimplemented
+            if (onGround || coyoteTimer > 0) {
                 jump();
             }
         }
@@ -89,14 +89,16 @@ public class Player extends Mob {
 
     @Override
     public void update() { 
-        // handels jump
+        // handles jump
         if (yVel > 0 && !jumpHeld) {
             yVel -= 2 * gravity;
         }
         if (yVel < 0) {
             onGround = false;
         }
+        // dashupdate must be after jump handling to kill vertical velocity
         dashUpdate();
+
         super.update();
     }
 
@@ -108,5 +110,10 @@ public class Player extends Mob {
     public void render(Graphics g) {
         super.render(g);
         g.drawRect(640, 480, 32, 32);
+    }
+
+    public void setPos(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 }

@@ -9,7 +9,7 @@ import com.shich.game.util.MouseHandler;
 
 public class PlayState extends GameState {
 
-    private Player player;
+    public Player player;
     private Level level;
     private int selectedLevel;
 
@@ -18,7 +18,7 @@ public class PlayState extends GameState {
 
     public PlayState(GameStateManager gsm) {
         super(gsm);
-        level = new Level();
+        level = new Level(this);
         player = new Player("bob", 0, 0, level);
     }
 
@@ -28,13 +28,16 @@ public class PlayState extends GameState {
 
     @Override
     public void input(KeyHandler key, MouseHandler mouse) {
-        player.input(key, mouse);
-
-        if (key.action.clicked() && level.name == "selector") {
-            if (level.name == "selector" && selectedLevel >= 0) {
+        // level selector
+        if (level.name == "selector") {
+            if (key.action.clicked() && selectedLevel >= 0) {
                 loadLevel("level-" + selectedLevel);
+                player.x = 0;
+                player.y = 0;
             }
+            key.jump.clicked();
         }
+        player.input(key, mouse);
     }
 
     @Override
@@ -63,12 +66,11 @@ public class PlayState extends GameState {
 
         g.translate(1536 / 2 - camX, 800 / 2 + 200 + camY);
 
-        player.render(g);
-        level.render(g, player.x, player.y);
-
         if (level.name == "selector" && selectedLevel >= 0) {
             g.drawString("level-" + selectedLevel, (int) Math.round((player.x + 3) * 32 * 3 / 4), -10);
         }
+        level.render(g, player.x, player.y);
+        player.render(g);
     }
 
     public void transition(Graphics g, int centetX, int centerY) {

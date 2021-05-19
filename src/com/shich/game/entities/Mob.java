@@ -34,7 +34,6 @@ public class Mob extends Entity {
     }
     
     private void collisionUpdateX() {
-
         if (level.checkCollide(this)) {
             if (xDir == 1) {
                 xNew = Math.floor(xNew);
@@ -47,7 +46,6 @@ public class Mob extends Entity {
     }
 
     private void collisionUpdateY() {
-
         if (level.checkCollide(this)) {
             if (yVel > 0) {
                 yNew = Math.floor(yNew);
@@ -76,7 +74,7 @@ public class Mob extends Entity {
         // update to new coord
         x = xNew;
         y = yNew;
-        // update to velocity
+        // update velocity
         xVel = 0;
         yVel -= gravity * deltaTime;
     }

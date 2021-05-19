@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import java.awt.Graphics;
 
-public abstract class Entity {
+public class Entity {
 
     protected static ArrayList<Entity> allEntities = new ArrayList<Entity>();
 
@@ -27,7 +27,7 @@ public abstract class Entity {
     }
 
     public void loadImage(String file) {
-        ImageIcon ii = new ImageIcon("src/com/shich/game/graphics/" + file);
+        ImageIcon ii = new ImageIcon("graphics/" + file);
         img = ii.getImage();
     }
 
@@ -35,7 +35,7 @@ public abstract class Entity {
     }
 
     public void render(Graphics g, int xScale, int yScale, int xOffset, int yOffset) {
-        g.drawImage(img, toInt(x * xScale) + xOffset, toInt(y * yScale) + yOffset, null);
+        g.drawImage(img, toInt(x * xScale) + xOffset, toInt(y * yScale) + yOffset, (int) width, (int) height, null);
     }
 
     public void render(Graphics g, int xOffset, int yOffset) {

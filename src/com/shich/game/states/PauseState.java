@@ -2,26 +2,17 @@ package com.shich.game.states;
 
 import java.awt.Graphics;
 
-import com.shich.game.entities.Entity;
 import com.shich.game.util.KeyHandler;
 import com.shich.game.util.MouseHandler;
 
 public class PauseState extends GameState {
 
-    static private Button pauseButton;
+    // static private Button pauseButton;
 
     public PauseState(GameStateManager gsm) {
         super(gsm);
 
-        pauseButton = new Button("src/com/shich/game/graphics/pauseButton.png", 640, 360);
-    }
-
-    private class Button extends Entity {
-
-        public Button(String image, int x, int y) {
-            super(x, y);
-            loadImage(image);
-        }
+        // pauseButton = new Button("src/com/shich/game/graphics/pauseButton.png", 640, 360);
     }
 
     @Override

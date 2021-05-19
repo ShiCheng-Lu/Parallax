@@ -6,17 +6,23 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
+import com.shich.game.entities.Entity;
 import com.shich.game.entities.Mob;
+import com.shich.game.states.GameState;
+import com.shich.game.states.PlayState;
 
 public class Level {
+    public GameState parent;
     public String name;
     public int layerNum;
-    public List<Layer> layers;
+    public ArrayList<Layer> layers;
 
-    public Level() {
+    protected ArrayList<Entity> assets = new ArrayList<Entity>();
+
+    public Level(GameState parent) {
+        this.parent = parent;
         layerNum = 0;
         layers = new ArrayList<Layer>();
     }
@@ -50,6 +56,18 @@ public class Level {
     public void remove(int layer, int x, int y) {
         if (layer >= 0 && layer < layerNum) {
             layers.get(layer).set(x, y, Block.AIR);
+        }
+    }
+
+    public void loadNext() {
+        if (parent instanceof PlayState) {
+            PlayState p = (PlayState) parent;
+            p.player.xNew = 0;
+            p.player.yNew = 0;
+            p.player.x = 0;
+            p.player.y = 0;
+            int newlevel = Integer.parseInt(name.split("-")[1]) + 1;
+            load("level-" + newlevel);
         }
     }
 
@@ -91,7 +109,7 @@ public class Level {
             layerNum = 0;
             layers = new ArrayList<Layer>();
 
-            String filePath = "src/com/shich/game/level/levels/" + name + ".txt";
+            String filePath = "levels/" + name + ".txt";
             File file = new File(filePath);
             Scanner fileReader = new Scanner(file);
 
@@ -100,7 +118,7 @@ public class Level {
                 int height = fileReader.nextInt();
                 int movementMod = fileReader.nextInt();
                 String data = fileReader.nextLine().strip();
-                Layer layer = new Layer(width, height, movementMod);
+                Layer layer = new Layer(this, width, height, movementMod);
 
                 int index = 0;
                 for (int x = 0; x < width; ++x) {
@@ -113,11 +131,15 @@ public class Level {
                 layerNum++;
             }
             
+            layers.get(0).addAsset(-768, 0, "assets/grass.png");
+            layers.get(1).addAsset(-768, -128, "assets/l2.png");
+
             fileReader.close();
             this.name = name;
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
+            load("selector");
         }
     }
 }
