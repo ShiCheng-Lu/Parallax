@@ -21,7 +21,7 @@ public class PauseState extends GameState {
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTime) {
 
     }
 

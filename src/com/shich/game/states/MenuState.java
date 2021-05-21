@@ -33,7 +33,7 @@ public class MenuState extends GameState {
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTime) {
         if (enterPlayState.clicked()) {
             gsm.remove(0);
             PlayState ps = new PlayState(gsm);

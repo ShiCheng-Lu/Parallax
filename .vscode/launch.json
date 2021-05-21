@@ -2,9 +2,9 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch Window",
+            "name": "Launch Main",
             "request": "launch",
-            "mainClass": "com.shich.game.Window",
+            "mainClass": "com.shich.game.Main",
             "projectName": "Parallax_12ef2faf"
         }
     ]

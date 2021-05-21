@@ -1,81 +1,60 @@
 package com.shich.game.entities;
 
+import com.shich.game.collision.*;
 import com.shich.game.level.Level;
 
+import org.joml.Vector2f;
+
 public class Mob extends Entity {
+    
+    protected Vector2f velocity;
+    protected Vector2f accerlation;
+    protected Vector2f velocityMax;
 
-    // movement
-    protected int xDir = 1;
-    protected double xVel, yVel;
-    protected double xVelMax, yVelMax;
-    public double xNew, yNew;
-
-    protected int xAcc;
     // dash
     protected int dashTime, dashDist, dashCooldown;
     protected int dashTimer = 0, dashCooldownTimer = 0;
-    protected double dashSpeed;
+    protected float dashSpeed;
     // jump
     protected int jumpTime = 0, jumpTimer;
     protected boolean onGround = true, jumpHeld;
     protected int coyoteTime, coyoteTimer;
 
-    protected double maxHeight;
+    protected float maxHeight;
 
     // jumps
-    protected double jumpDist, jumpHeight, jumpVel;
-    protected double gravity;
+    protected float jumpDist, jumpHeight, jumpVel;
+    protected float gravity;
 
     protected Level level;
 
-    public Mob(double x, double y, double width, double height, Level level) {
-        super(x, y, width, height);
+    public Mob(AABB bounds, Level level) {
+        super(bounds);
         this.level = level;
     }
+
+    public void update(float deltaTime) {
+        bounding_box.center.add(velocity);
+
+        int lowerX = (int) Math.floor(bounding_box.getMinX());
+        int upperX = (int) Math.ceil(bounding_box.getMaxX());
+        int lowerY = (int) Math.floor(bounding_box.getMinY());
+        int upperY = (int) Math.ceil(bounding_box.getMaxY());
+
+        for (int x = lowerX; x <= upperX; ++x) {
+            for (int y = lowerY; x <= upperY; ++y) {
+                
+                byte type = level.getBlockType(x, y);
+                AABB bounds = level.getBoundingBox(x, y);
+
+                Collision collision = bounding_box.getCollision(bounds);
+
+                if (collision.intersects) {
+                    bounding_box.correctPosition(bounds, collision);
+                }
+            }
+        }
+    }
+
     
-    private void collisionUpdateX() {
-        if (level.checkCollide(this)) {
-            if (xDir == 1) {
-                xNew = Math.floor(xNew);
-                xVel = 0;
-            } else {
-                xNew = Math.ceil(xNew);
-                xVel = 0;
-            }
-        }
-    }
-
-    private void collisionUpdateY() {
-        if (level.checkCollide(this)) {
-            if (yVel > 0) {
-                yNew = Math.floor(yNew);
-                yVel = 0;
-            } else {
-                yNew = Math.ceil(yNew);
-                yVel = 0;
-                onGround = true;
-                coyoteTimer = coyoteTime;
-            }
-        }
-
-        if (onGround == false && coyoteTimer > 0) {
-            coyoteTimer--;
-        }
-    }
-
-    public void update() {
-        double deltaTime = 1;
-
-        // simplified velocity verlet
-        xNew = x + xVel * xDir * deltaTime;
-        collisionUpdateX();
-        yNew = y + yVel * deltaTime - gravity * 0.5 * deltaTime * deltaTime;
-        collisionUpdateY();
-        // update to new coord
-        x = xNew;
-        y = yNew;
-        // update velocity
-        xVel = 0;
-        yVel -= gravity * deltaTime;
-    }
 }

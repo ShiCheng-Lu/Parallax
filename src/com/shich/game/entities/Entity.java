@@ -1,63 +1,62 @@
 package com.shich.game.entities;
 
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
-import java.awt.Graphics;
+
+import com.shich.game.collision.AABB;
+import com.shich.game.level.*;
+import com.shich.game.render.*;
+
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public class Entity {
 
-    protected static ArrayList<Entity> allEntities = new ArrayList<Entity>();
+    protected AABB bounding_box;
 
-    public double x, y, width, height;
-    protected Image img;
-    public int xScale = 1, yScale = 1, xOffset = 0, yOffset = 0;
+    protected Vector2f scale;
 
-    public Entity(double x, double y, double width, double height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+    public Entity(AABB bounds) {
+        bounding_box = bounds;
     }
 
-    public Entity(double x, double y) {
-        this(x, y, 0, 0);
+    protected void renderSetup(String texture_file) {
+        float[] vertices = new float[] {
+            -1f, 1f, 0,
+            1f, 1f, 0,
+            1f, -1f, 0,
+            -1f, -1f
+        };
+
+        float[] texture = new float[] {
+            0,0,
+            1,0,
+            1,1,
+            0,1
+        };
+
+        int[] indices = new int[] {
+            0,1,2,
+            2,3,0
+        };
+
+        model = new Model(vertices, texture, indices);
+        tex = new Texture(texture_file);
     }
 
-    public void loadImage(String file) {
-        ImageIcon ii = new ImageIcon("graphics/" + file);
-        img = ii.getImage();
+
+    public void input() {
     }
 
-    public void update() {
+    public void update(double deltaTime) {
     }
 
-    public void render(Graphics g, int xScale, int yScale, int xOffset, int yOffset) {
-        g.drawImage(img, toInt(x * xScale) + xOffset, toInt(y * yScale) + yOffset, (int) width, (int) height, null);
+    public void render() {
     }
 
-    public void render(Graphics g, int xOffset, int yOffset) {
-        render(g, xScale, yScale, xOffset, yOffset); // use entity default scale
-    }
+    public float getX() { return bounding_box.center.x; }
+    public float getY() { return bounding_box.center.y; }
 
-    public void render(Graphics g) {
-        render(g, xScale, yScale, xOffset, yOffset); // use entity default scale and offset
-    }
-
-    public void setRenderSetting(int xScale, int yScale, int xOffset, int yOffset) {
-        this.xScale = xScale;
-        this.yScale = yScale;
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
-    }
-
-    public int toInt(double num) {
-        return (int) Math.round(num);
-    }
-
-    public Rectangle getBounds() {
-        return new Rectangle(toInt(x - width / 2), toInt(y - height / 2), toInt(width), toInt(height));
+    public void setPos(float x, float y) {
+        bounding_box.center.set(x, y);
     }
 }

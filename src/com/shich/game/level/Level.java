@@ -62,10 +62,7 @@ public class Level {
     public void loadNext() {
         if (parent instanceof PlayState) {
             PlayState p = (PlayState) parent;
-            p.player.xNew = 0;
-            p.player.yNew = 0;
-            p.player.x = 0;
-            p.player.y = 0;
+            p.player.setPos(0, 0);
             int newlevel = Integer.parseInt(name.split("-")[1]) + 1;
             load("level-" + newlevel);
         }
@@ -131,8 +128,12 @@ public class Level {
                 layerNum++;
             }
             
-            layers.get(0).addAsset(-768, 0, "assets/grass.png");
-            layers.get(1).addAsset(-768, -128, "assets/l2.png");
+            // int[] startloc = {-576, -384, -192, 0, 192, 384, 576, 768, 960, 1152};
+            // for (int x : startloc) {
+            //     layers.get(0).addAsset(x, 32, "assets/grass03.png");
+            // }
+            
+            // layers.get(1).addAsset(-768, -128, 2304, 226, "assets/l2.png");
 
             fileReader.close();
             this.name = name;

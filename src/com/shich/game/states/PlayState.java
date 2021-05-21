@@ -4,8 +4,7 @@ import java.awt.Graphics;
 
 import com.shich.game.entities.*;
 import com.shich.game.level.Level;
-import com.shich.game.util.KeyHandler;
-import com.shich.game.util.MouseHandler;
+import com.shich.game.util.Input;
 
 public class PlayState extends GameState {
 
@@ -27,22 +26,19 @@ public class PlayState extends GameState {
     }
 
     @Override
-    public void input(KeyHandler key, MouseHandler mouse) {
+    public void input(Input input) {
         // level selector
         if (level.name == "selector") {
-            if (key.action.clicked() && selectedLevel >= 0) {
+            if (input.isKeyPressed(input.ACTION) && selectedLevel >= 0) {
                 loadLevel("level-" + selectedLevel);
-                player.x = 0;
-                player.y = 0;
             }
-            key.jump.clicked();
         }
-        player.input(key, mouse);
+        player.input(input);
     }
 
     @Override
-    public void update() {
-        player.update();
+    public void update(double deltaTime) {
+        player.update(deltaTime);
 
         // level selector
         if (level.name == "selector") {
@@ -58,19 +54,8 @@ public class PlayState extends GameState {
     }
 
     @Override
-    public void render(Graphics g) {
-        player.drawHUD(g);
-        // relatives renders:
-        camX = (int) Math.round(player.x * 32);
-        camY = (int) Math.round(player.y * 32);
-
-        g.translate(1536 / 2 - camX, 800 / 2 + 200 + camY);
-
-        if (level.name == "selector" && selectedLevel >= 0) {
-            g.drawString("level-" + selectedLevel, (int) Math.round((player.x + 3) * 32 * 3 / 4), -10);
-        }
-        level.render(g, player.x, player.y);
-        player.render(g);
+    public void render() {
+        level.render();
     }
 
     public void transition(Graphics g, int centetX, int centerY) {

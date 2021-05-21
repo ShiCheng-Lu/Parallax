@@ -1,11 +1,8 @@
 package com.shich.game.states;
 
 import java.util.ArrayList;
-import java.awt.Graphics;
 
-import com.shich.game.GamePanel;
-import com.shich.game.util.KeyHandler;
-import com.shich.game.util.MouseHandler;
+import com.shich.game.util.Input;
 
 public class GameStateManager {
     /*
@@ -17,17 +14,17 @@ public class GameStateManager {
         states.add(new MenuState(this));
     }
 
-    public void update() {
-        states.get(0).update();
+    public void update(double deltaTime) {
+        states.get(0).update(deltaTime);
     }
 
-    public void input(KeyHandler key, MouseHandler mouse) {
-        states.get(0).input(key, mouse);
+    public void input(Input input) {
+        states.get(0).input(input);
     }
 
-    public void render(Graphics g) {
+    public void render() {
         for (GameState state : states) {
-            state.render(g);
+            state.render();
         }
     }
 

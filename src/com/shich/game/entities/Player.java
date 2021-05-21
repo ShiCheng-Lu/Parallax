@@ -1,8 +1,7 @@
 package com.shich.game.entities;
 
 import com.shich.game.level.Level;
-import com.shich.game.util.KeyHandler;
-import com.shich.game.util.MouseHandler;
+import com.shich.game.util.Input;
 
 import java.awt.Graphics;
 import java.awt.Color;
@@ -11,9 +10,8 @@ public class Player extends Mob {
 
 
     public Player(String name, int x, int y, Level level) {
-        super(x, y, 1, 1, level);
-        loadImage("player.png");
-        setRenderSetting(32, -32, 0, 0);
+        super(x, y, level);
+        renderSetup("player.png");
         //
         xVelMax = 0.15;
         yVelMax = 0.3;
@@ -43,15 +41,33 @@ public class Player extends Mob {
         jumpHeld = true;
     }
 
-    public void input(KeyHandler key, MouseHandler mouse) {
+    private boolean dashUpdate() {
+        if (dashCooldownTimer > 0) {
+            dashCooldownTimer--;
+        }
+        if (dashTimer > 0) {
+            // in dash
+            velocity.set(dashSpeed, 0);
+            dashTimer--;
+            return true;
+        } else {
+            // normal movement
+            return false;
+        }
+    }
+
+    public void drawHUD(Graphics g) {
+        g.setColor(Color.BLACK);
+        g.drawString(String.format("x: %.2f, y: %.2f", getX(), getY()), 1000, 20);
+    }
+
+    public void input(Input input) {
         if (dashTimer == 0) {
-            if (key.left.pressed()) {
-                xDir = -1;
-                xVel = xVelMax;
+            if (input.isKeyDown(GLFW_KEY_W)) {
+                velocity.x += accerlation.x;
             }
             if (key.right.pressed()) {
-                xDir = 1;
-                xVel = xVelMax;
+                velocity.x += accerlation.x;
             }
         }
 
@@ -71,49 +87,12 @@ public class Player extends Mob {
         }
     }
 
-    private boolean dashUpdate() {
-        if (dashCooldownTimer > 0) {
-            dashCooldownTimer--;
-        }
-        if (dashTimer > 0) {
-            // in dash
-            xVel = dashSpeed;
-            yVel = 0;
-            dashTimer--;
-            return true;
-        } else {
-            // normal movement
-            return false;
-        }
-    }
-
-    @Override
-    public void update() { 
+    public void update(double deltaTime) { 
         // handles jump
-        if (yVel > 0 && !jumpHeld) {
-            yVel -= 2 * gravity;
-        }
-        if (yVel < 0) {
-            onGround = false;
-        }
+
         // dashupdate must be after jump handling to kill vertical velocity
         dashUpdate();
 
-        super.update();
-    }
-
-    public void drawHUD(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.drawString(String.format("x: %.2f, y: %.2f", x, y), 1000, 20);
-    }
-
-    public void render(Graphics g) {
-        super.render(g);
-        g.drawRect(640, 480, 32, 32);
-    }
-
-    public void setPos(double x, double y) {
-        this.x = x;
-        this.y = y;
+        super.update(deltaTime);
     }
 }

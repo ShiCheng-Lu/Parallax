@@ -85,7 +85,7 @@ public class CreateState extends GameState {
             }
         }
 
-        public void update() {
+        public void update(double deltaTime) {
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
                     layer.set(x, width - y - 1, inputs[x][y].state);
@@ -96,7 +96,7 @@ public class CreateState extends GameState {
         public void render(Graphics g) {
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
-                    inputs[x][y].render(g);
+                    inputs[x][y].render();
 
                     if (inputs[x][y].state != 'a') {
                         int blockWidth = layer.movementMod * 2 - 1;
@@ -151,10 +151,10 @@ public class CreateState extends GameState {
     }
 
     @Override
-    public void update() {
-        player.update();
+    public void update(double deltaTime) {
+        player.update(deltaTime);
         for (LayerInputs layerInput : layerInputs) {
-            layerInput.update();
+            layerInput.update(deltaTime);
         }
         if (saveButton.clicked()) {
             level.save("temp");
