@@ -7,9 +7,12 @@ import com.shich.game.entities.Entity;
 import com.shich.game.render.Model;
 import com.shich.game.render.Shader;
 import com.shich.game.render.Texture;
+import com.shich.game.util.Camera;
 import com.shich.game.util.Input;
 import com.shich.game.util.Window;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 public class Main implements Runnable {
@@ -17,6 +20,7 @@ public class Main implements Runnable {
     private Window window;
     private Shader shader;
     private Input input;
+    private Camera camera;
 
     public void start() {
         game = new Thread(this, "game thread");
@@ -38,6 +42,12 @@ public class Main implements Runnable {
         input = window.getInput();
         shader = new Shader("shaders/shader");
         Model.setShader(shader);
+
+        camera = new Camera(window.getWidth(), window.getHeight());
+        shader.bind();
+        shader.setUniform("projection", camera.getProjection()); 
+        shader.unbind();
+
     }
 
     @Override
@@ -45,8 +55,7 @@ public class Main implements Runnable {
         init();
 
         Entity m = new Entity(new AABB(1, 1, 1, 1), "block/block-8.png");
-        Texture tex = new Texture("block/block-8.png");
-        tex.bind();
+        Entity e = new Entity(new AABB(2, 1, 1, 1), "block/block-1.png");
 
         while (!window.shouldClose()) {
             input();
@@ -54,6 +63,7 @@ public class Main implements Runnable {
             render();
 
             m.render();
+            e.render();
         }
         destroy();
     }
@@ -67,7 +77,6 @@ public class Main implements Runnable {
             window.setSize(1920, 1080);
         }
 
-
         window.input();
     }
 
@@ -76,8 +85,7 @@ public class Main implements Runnable {
     }
 
     public void render() {
-
-        // window.clear();
+        window.clear();
         window.swapBuffers();
     }
 

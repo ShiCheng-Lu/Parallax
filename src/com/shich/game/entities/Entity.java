@@ -32,19 +32,19 @@ public class Entity {
             -1f, 1f, 0,
             1f, 1f, 0,
             1f, -1f, 0,
-            -1f, -1f
+            -1f, -1f, 0,
         };
 
         float[] texCoords = new float[] {
             0,0,
             1,0,
             1,1,
-            0,1
+            0,1,
         };
 
         int[] indices = new int[] {
             0,1,2,
-            2,3,0
+            2,3,0,
         };
 
         this.model = new Model(vertices, texCoords, indices);

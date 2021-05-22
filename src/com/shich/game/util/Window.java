@@ -18,6 +18,7 @@ public class Window {
 
     private Input input;
     private boolean fullscreen;
+    private boolean size_changed;
     
     private int frame_couter = 0;
     private double time;
@@ -38,8 +39,7 @@ public class Window {
             public void invoke(long window, int width, int height) {
                 Window.this.width = width;
                 Window.this.height = height;
-                glViewport(0, 0, width, height);
-                System.out.println("" + width + "  " + height);
+                Window.this.size_changed = true;
             }
         };
 
