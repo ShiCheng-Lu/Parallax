@@ -1,17 +1,21 @@
 package com.shich.game;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.glfw.GLFWVidMode;
 
+import com.shich.game.collision.AABB;
+import com.shich.game.entities.Entity;
+import com.shich.game.render.Model;
+import com.shich.game.render.Shader;
+import com.shich.game.render.Texture;
 import com.shich.game.util.Input;
 import com.shich.game.util.Window;
 
-import org.lwjgl.opengl.GL;
+import org.lwjgl.glfw.GLFWErrorCallback;
 
 public class Main implements Runnable {
     private Thread game;
     private Window window;
+    private Shader shader;
     private Input input;
 
     public void start() {
@@ -20,24 +24,36 @@ public class Main implements Runnable {
     }
 
     private void init() {
-        Window.setErrorCallbacks();
+        GLFWErrorCallback.createPrint().set();
 
         if (!glfwInit()) {
             System.err.println("GLFW failed to initiate");
             System.exit(1); // exit with error code 1
         }
 
-        window = new Window(1920, 1080, "Parallax", false);
+        window = new Window(1920, 1080, "Parallax", true);
+        if (window == null) {
+            throw new RuntimeException("Window failed to initalize");
+        }
         input = window.getInput();
+        shader = new Shader("shaders/shader");
+        Model.setShader(shader);
     }
 
     @Override
     public void run() {
         init();
+
+        Entity m = new Entity(new AABB(1, 1, 1, 1), "block/block-8.png");
+        Texture tex = new Texture("block/block-8.png");
+        tex.bind();
+
         while (!window.shouldClose()) {
             input();
             update();
             render();
+
+            m.render();
         }
         destroy();
     }
@@ -45,6 +61,10 @@ public class Main implements Runnable {
     public void input() {
         if (input.isButtonPressed(GLFW_MOUSE_BUTTON_1)) {
             System.out.println("x: " + input.mouse_x + "y: " + input.mouse_y);
+        }
+
+        if (input.isKeyDown(input.DOWN)) {
+            window.setSize(1920, 1080);
         }
 
 
@@ -56,7 +76,7 @@ public class Main implements Runnable {
     }
 
     public void render() {
-        window.setBackgroundColour(0.5f, 0.5f, 1f);
+
         // window.clear();
         window.swapBuffers();
     }

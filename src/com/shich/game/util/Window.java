@@ -20,20 +20,11 @@ public class Window {
     private boolean fullscreen;
     
     private int frame_couter = 0;
-    private double time = getTime();
+    private double time;
 
-    public static void setErrorCallbacks() {
-        glfwSetErrorCallback(new GLFWErrorCallback() {
-            @Override
-            public void invoke(int error, long description) {
-                throw new IllegalStateException(GLFWErrorCallback.getDescription(description));
-            }
-        });
-    }
-
-    public Window(int width, int height, String title) {
-        this.width = width;
-        this.height = height;
+    public Window(int w, int h, String title) {
+        this.width = w;
+        this.height = h;
         this.xpos = new int[1];
         this.ypos = new int[1];
 
@@ -42,14 +33,19 @@ public class Window {
 
         createWindow();
 
-        glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
+        GLFWWindowSizeCallback change_size = new GLFWWindowSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
-                glViewport(0, 0, width / 2, height / 2);
+                Window.this.width = width;
+                Window.this.height = height;
+                glViewport(0, 0, width, height);
                 System.out.println("" + width + "  " + height);
-                clear();
             }
-        });
+        };
+
+        glfwSetWindowSizeCallback(window, change_size);
+
+        time = getTime();
     }
 
     public Window(int width, int height, String title, boolean maximize) {
@@ -72,9 +68,10 @@ public class Window {
         glfwSwapInterval(1);    // set fps
         glfwShowWindow(window);
 
-        glClearColor(1, 1, 1, 0);
+        setBackgroundColour(0, 0, 0);
 
         input = new Input(window);
+        glEnable(GL_TEXTURE_2D);
     }
 
     public void setBackgroundColour(float r, float g, float b) {
@@ -86,8 +83,7 @@ public class Window {
     }
 
     public void setSize(int width, int height) {
-        this.width = width;
-        this.height = height;
+        glfwSetWindowSize(window, width, height);
     }
 
     public void setPos(int xpos, int ypos) {

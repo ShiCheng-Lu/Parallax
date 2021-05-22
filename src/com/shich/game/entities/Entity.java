@@ -14,9 +14,17 @@ public class Entity {
     protected AABB bounding_box;
 
     protected Vector2f scale;
+    protected Model model;
+    protected Texture texture;
+    
 
     public Entity(AABB bounds) {
         bounding_box = bounds;
+    }
+
+    public Entity(AABB bounds, String texture_file) {
+        this(bounds);
+        renderSetup(texture_file);
     }
 
     protected void renderSetup(String texture_file) {
@@ -27,7 +35,7 @@ public class Entity {
             -1f, -1f
         };
 
-        float[] texture = new float[] {
+        float[] texCoords = new float[] {
             0,0,
             1,0,
             1,1,
@@ -39,8 +47,8 @@ public class Entity {
             2,3,0
         };
 
-        model = new Model(vertices, texture, indices);
-        tex = new Texture(texture_file);
+        this.model = new Model(vertices, texCoords, indices);
+        this.texture = new Texture(texture_file);
     }
 
 
@@ -51,6 +59,8 @@ public class Entity {
     }
 
     public void render() {
+        texture.bind();
+        model.render();
     }
 
     public float getX() { return bounding_box.center.x; }

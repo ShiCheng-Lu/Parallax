@@ -11,6 +11,10 @@ public class AABB { // axis aligned bounding box
         this.half_extent = half_extent;
     }
 
+    public AABB(float x, float y, float width, float height) {
+        this(new Vector2f(x, y), new Vector2f(width / 2, height / 2));
+    }
+
     public Collision getCollision(AABB other) {
         Vector2f distance = center.sub(other.center, new Vector2f()).absolute();
 
