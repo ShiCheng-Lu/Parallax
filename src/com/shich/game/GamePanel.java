@@ -32,7 +32,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void paintComponent(Graphics g) {
-        // super.paintComponent(g);
+        super.paintComponent(g);
 
         render(g);
     }
