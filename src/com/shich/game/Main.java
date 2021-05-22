@@ -43,19 +43,15 @@ public class Main implements Runnable {
         shader = new Shader("shaders/shader");
         Model.setShader(shader);
 
-        camera = new Camera(window.getWidth(), window.getHeight());
-        shader.bind();
-        shader.setUniform("projection", camera.getProjection()); 
-        shader.unbind();
-
+        camera = new Camera(window, shader);
     }
 
     @Override
     public void run() {
         init();
 
-        Entity m = new Entity(new AABB(1, 1, 1, 1), "block/block-8.png");
-        Entity e = new Entity(new AABB(2, 1, 1, 1), "block/block-1.png");
+        Entity m = new Entity(new AABB(1, 1, 0.5f, 0.5f), "block/block-8.png");
+        // Entity e = new Entity(new AABB(2, 1, 0.5f, 0.5f), "block/block-1.png");
 
         while (!window.shouldClose()) {
             input();
@@ -63,7 +59,7 @@ public class Main implements Runnable {
             render();
 
             m.render();
-            e.render();
+            // e.render();
         }
         destroy();
     }
@@ -76,16 +72,16 @@ public class Main implements Runnable {
         if (input.isKeyDown(input.DOWN)) {
             window.setSize(1920, 1080);
         }
-
         window.input();
     }
 
     public void update() {
+        input.update();
+        camera.update();
         window.update();
     }
 
     public void render() {
-        window.clear();
         window.swapBuffers();
     }
 

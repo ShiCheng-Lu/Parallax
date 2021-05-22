@@ -2,8 +2,6 @@ package com.shich.game.util;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-import java.util.HashMap;
-
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;

@@ -18,7 +18,7 @@ public class Window {
 
     private Input input;
     private boolean fullscreen;
-    private boolean size_changed;
+    public boolean size_changed;
     
     private int frame_couter = 0;
     private double time;
@@ -78,10 +78,6 @@ public class Window {
         glClearColor(r, g, b, 0);
     }
 
-    public void clear() {
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-
     public void setSize(int width, int height) {
         glfwSetWindowSize(window, width, height);
     }
@@ -113,7 +109,6 @@ public class Window {
             glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, 0);
         } else {
             glfwSetWindowMonitor(window, 0, xpos[0], ypos[0], width, height, 0);
-            
         }
     }
 
@@ -140,6 +135,11 @@ public class Window {
     public void update() {
         input.update();
         glfwPollEvents();
+
+        if (size_changed) {
+            glViewport(0, 0, width, height);
+        }
+
         // frame counter
         frame_couter++;
         double current_time = getTime();
