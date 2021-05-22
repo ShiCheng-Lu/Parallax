@@ -1,17 +1,12 @@
 package com.shich.game.render;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
 
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 
-
 public class Model {
-
-    private static Shader shader;
 
     private int draw_count;
     private int vao;
@@ -24,11 +19,11 @@ public class Model {
         this.indices = indices;
 
         vao = glGenVertexArrays();
-        glBindVertexArray(vao);        
+        glBindVertexArray(vao);
 
         vbo = storeData(floatBuffer(vertices), 0, 3);
         tbo = storeData(floatBuffer(texture), 1, 2);
-        
+
         ibo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
@@ -44,27 +39,30 @@ public class Model {
         return buffer_id;
     }
 
+    public int getDraw_count() {
+        return draw_count;
+    }
+
+    public int getVao() {
+        return vao;
+    }
+
+    public int getVbo() {
+        return vbo;
+    }
+
+    public int getTbo() {
+        return tbo;
+    }
+
+    public int getIbo() {
+        return ibo;
+    }
+
     public FloatBuffer floatBuffer(float[] data) {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
         buffer.put(data).flip();
         return buffer;
-    }
-
-    public void render() {
-        glBindVertexArray(vao);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-
-        shader.bind();
-        glDrawElements(GL_TRIANGLES, draw_count, GL_UNSIGNED_INT, 0);
-        shader.unbind();
-        // unbind and disable state
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glBindVertexArray(0);
     }
 
     public void destroy() {
@@ -72,9 +70,5 @@ public class Model {
         glDeleteBuffers(tbo);
         glDeleteBuffers(ibo);
         glDeleteVertexArrays(vao);
-    }
-
-    public static void setShader(Shader shader) {
-        Model.shader = shader;
     }
 }

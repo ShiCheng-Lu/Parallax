@@ -37,7 +37,7 @@ public class Shader {
 
         glAttachShader(program, vert);
         glAttachShader(program, frag);
-        
+
         glBindAttribLocation(program, 0, "vertices");
 
         glLinkProgram(program);

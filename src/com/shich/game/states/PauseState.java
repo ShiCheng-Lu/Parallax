@@ -1,9 +1,7 @@
 package com.shich.game.states;
 
-import java.awt.Graphics;
-
-import com.shich.game.util.KeyHandler;
-import com.shich.game.util.MouseHandler;
+import com.shich.game.render.Renderer;
+import com.shich.game.util.Input;
 
 public class PauseState extends GameState {
 
@@ -16,7 +14,7 @@ public class PauseState extends GameState {
     }
 
     @Override
-    public void input(KeyHandler key, MouseHandler mouse) {
+    public void input(Input input) {
 
     }
 
@@ -26,8 +24,7 @@ public class PauseState extends GameState {
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(Renderer renderer) {
         
     }
-
 }

@@ -2,17 +2,21 @@ package com.shich.game.level;
 
 import java.util.Hashtable;
 
+import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
+import com.shich.game.render.Renderer;
+
+import org.joml.Vector3f;
 
 public class Block extends Entity {
 
     private static Hashtable<Byte, Block>block_set = new Hashtable<Byte, Block>();
-    private Byte id;
+    private byte id;
     
     public char type;
 
-    public Block(Byte id, String image_file) {
-        super(null, null);
+    public Block(Byte id, String texture_file) {
+        super(new AABB(0, 0, 0, 0), texture_file);
         this.id = id;
         block_set.put(id, this);
     }
@@ -21,15 +25,22 @@ public class Block extends Entity {
         return type;
     }
 
-    public static void render(byte id, float x, float y) {
-        block_set.get(id).render(x, y);
+    public static void render(Renderer renderer, byte id, Vector3f offset) {
+        block_set.get(id).render(renderer, offset);
     }
 
-    public void render(float x, float y) {
-        
+    public void render(Renderer renderer, Vector3f offset) {
+        renderer.render(model, offset, texture);
     }
 
-    public Block getBlock(Byte id) {
+    public static Block getBlock(byte id) {
         return block_set.get(id);
+    }
+
+    public static void init() {
+        byte[] types = new byte[] {0, 1, 2, 8, 9};
+        for (byte i : types) {
+            new Block(i, "block/block-" + i + ".png");
+        }
     }
 } 

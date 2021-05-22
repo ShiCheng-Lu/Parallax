@@ -8,64 +8,52 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
 import com.shich.game.entities.Mob;
+import com.shich.game.entities.Player;
+import com.shich.game.render.Renderer;
 import com.shich.game.states.GameState;
 import com.shich.game.states.PlayState;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
 public class Level {
-    public GameState parent;
     public String name;
     public int layerNum;
     public ArrayList<Layer> layers;
 
     protected ArrayList<Entity> assets = new ArrayList<Entity>();
 
-    public Level(GameState parent) {
-        this.parent = parent;
+    public Level() {
         layerNum = 0;
         layers = new ArrayList<Layer>();
     }
 
-    public void render(Graphics g, double pX, double pY) {
+    public void render(Renderer renderer, Player player) {
         for (int i = layerNum - 1; i >= 0; --i) {
-            int xOffset = (int) Math.round(pX * 32 * i / (i + 1));
-            int yOffset = (int) Math.round(pY * 32 * i / (i + 1));
-            layers.get(i).render(g, xOffset, -yOffset);
+            layers.get(i).render(renderer, player.getPos().mul(-1/(i + 1), new Vector3f()));
         }
     }
 
-    public boolean checkCollide(Mob m) {
-        // level boundary check
-        if (m.xNew < 0 || m.xNew > 24 || m.yNew < 0 || m.yNew > 24) {
-            return true;
-        }
-        // layer collide check
-        for (Layer layer : layers) {
-            if (layer.checkCollide(m)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void set(int layer, int x, int y, char type) {
+    public void set(int layer, int x, int y, byte type) {
         layers.get(layer).set(x, y, type);
     }
 
     public void remove(int layer, int x, int y) {
         if (layer >= 0 && layer < layerNum) {
-            layers.get(layer).set(x, y, Block.AIR);
+            layers.get(layer).set(x, y, (byte) 0);
         }
     }
 
     public void loadNext() {
-        if (parent instanceof PlayState) {
-            PlayState p = (PlayState) parent;
-            p.player.setPos(0, 0);
-            int newlevel = Integer.parseInt(name.split("-")[1]) + 1;
-            load("level-" + newlevel);
-        }
+        // if (parent instanceof PlayState) {
+        //     PlayState p = (PlayState) parent;
+        //     p.player.setPos(0, 0);
+        //     int newlevel = Integer.parseInt(name.split("-")[1]) + 1;
+        //     load("level-" + newlevel);
+        // }
     }
 
     public void save(String name) {
@@ -82,11 +70,11 @@ public class Level {
                 // encode layer definitions
                 output += layer.width + " ";
                 output += layer.height + " ";
-                output += layer.movementMod + " ";
+                output += layer.collisionMod + " ";
                 // encode layer datad
                 for (int x = 0; x < layer.width; ++x) {
                     for (int y = 0; y < layer.height; ++y) {
-                        output += layer.get(x, y).type;
+                        output += layer.get(x, y);
                     }
                 }
                 output += '\n';
@@ -106,7 +94,7 @@ public class Level {
             layerNum = 0;
             layers = new ArrayList<Layer>();
 
-            String filePath = "levels/" + name + ".txt";
+            String filePath = "res/levels/" + name + ".txt";
             File file = new File(filePath);
             Scanner fileReader = new Scanner(file);
 
@@ -115,12 +103,12 @@ public class Level {
                 int height = fileReader.nextInt();
                 int movementMod = fileReader.nextInt();
                 String data = fileReader.nextLine().strip();
-                Layer layer = new Layer(this, width, height, movementMod);
+                Layer layer = new Layer(this, width, height, new Matrix4f().scale(1 / movementMod));
 
                 int index = 0;
                 for (int x = 0; x < width; ++x) {
                     for (int y = 0; y < height; ++y) {
-                        layer.set(x, y, data.charAt(index));
+                        layer.set(x, y, (byte) (data.charAt(index) - '0'));
                         index++;
                     }
                 }

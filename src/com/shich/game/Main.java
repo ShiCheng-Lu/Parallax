@@ -4,12 +4,15 @@ import static org.lwjgl.glfw.GLFW.*;
 
 import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
+import com.shich.game.entities.Player;
+import com.shich.game.level.Block;
+import com.shich.game.level.Layer;
+import com.shich.game.level.Level;
 import com.shich.game.render.Model;
+import com.shich.game.render.Renderer;
 import com.shich.game.render.Shader;
 import com.shich.game.render.Texture;
-import com.shich.game.util.Camera;
-import com.shich.game.util.Input;
-import com.shich.game.util.Window;
+import com.shich.game.util.*;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -21,6 +24,12 @@ public class Main implements Runnable {
     private Shader shader;
     private Input input;
     private Camera camera;
+    private Renderer renderer;
+    private Timer timer;
+
+    // temps
+    private Player e;
+    private Level l;
 
     public void start() {
         game = new Thread(this, "game thread");
@@ -36,56 +45,65 @@ public class Main implements Runnable {
         }
 
         window = new Window(1920, 1080, "Parallax", true);
-        if (window == null) {
-            throw new RuntimeException("Window failed to initalize");
-        }
-        input = window.getInput();
+        input = new Input(window.window);
         shader = new Shader("shaders/shader");
-        Model.setShader(shader);
+        camera = new Camera(window);
+        renderer = new Renderer(shader, camera);
+        timer = new Timer();
 
-        camera = new Camera(window, shader);
+        window.setBackgroundColour(1, 1, 1);
     }
 
     @Override
     public void run() {
         init();
 
-        Entity m = new Entity(new AABB(1, 1, 0.5f, 0.5f), "block/block-8.png");
-        // Entity e = new Entity(new AABB(2, 1, 0.5f, 0.5f), "block/block-1.png");
+        l = new Level();
+        l.load("level-3");
+
+        Block.init();
+
+        e = new Player(new AABB(1, 1, 0.5f, 0.5f), l);
+        e.renderSetup("player.png");
 
         while (!window.shouldClose()) {
-            input();
-            update();
-            render();
-
-            m.render();
-            // e.render();
+            input(input);
+            update(timer);
+            render(renderer);
         }
         destroy();
     }
 
-    public void input() {
+    public void input(Input input) {
         if (input.isButtonPressed(GLFW_MOUSE_BUTTON_1)) {
-            System.out.println("x: " + input.mouse_x + "y: " + input.mouse_y);
+            System.out.println("pos: " + e.getPos() + "    camera: " + camera.getPosition());
         }
 
-        if (input.isKeyDown(input.DOWN)) {
-            window.setSize(1920, 1080);
-        }
-        window.input();
+        e.input(input);
+        window.input(input);
     }
 
-    public void update() {
+    public void update(Timer timer) {
+        timer.update();
+
+        camera.setPosition(e.getPos());
+
+        e.update(timer);
+
         input.update();
         camera.update();
-        window.update();
+        window.update(timer);
     }
 
-    public void render() {
+    public void render(Renderer renderer) {
+        e.render(renderer);
+        l.render(renderer, e);
+
         window.swapBuffers();
     }
 
     public void destroy() {
+        input.freeCallbacks();
         window.destroy();
     }
 
@@ -103,34 +121,35 @@ public class Main implements Runnable {
         // int frame_count = 0;
 
         // while (!window.shouldClose()) {
-        //     current_time = Timer.getTime();
-        //     unprecessed += current_time - last_update_time;
-        //     last_update_time = current_time;
+        // current_time = Timer.getTime();
+        // unprecessed += current_time - last_update_time;
+        // last_update_time = current_time;
 
-        //     while (unprecessed >= frame_cap) {
-        //         unprecessed -= frame_cap;
-        //         // frame counter, 
-        //         frame_time += frame_cap;
-        //         frame_count += 1;
-        //         if (frame_time >= 1) {
-        //             System.out.println("FPS: " + frame_count);
-        //             frame_count = 0;
-        //             frame_time = 0;
-        //         }
-        //         // update
-        //         new_render = true;
-        //         window.update(frame_cap);
-        //         if (window.getInput().isKeyDown(GLFW_KEY_LEFT_CONTROL) && window.getInput().isKeyPressed(GLFW_KEY_W)) {
-        //             window.setShouldClose(true);
-        //         }
-                
-        //     }
+        // while (unprecessed >= frame_cap) {
+        // unprecessed -= frame_cap;
+        // // frame counter,
+        // frame_time += frame_cap;
+        // frame_count += 1;
+        // if (frame_time >= 1) {
+        // System.out.println("FPS: " + frame_count);
+        // frame_count = 0;
+        // frame_time = 0;
+        // }
+        // // update
+        // new_render = true;
+        // window.update(frame_cap);
+        // if (window.getInput().isKeyDown(GLFW_KEY_LEFT_CONTROL) &&
+        // window.getInput().isKeyPressed(GLFW_KEY_W)) {
+        // window.setShouldClose(true);
+        // }
 
-        //     if (new_render) {
-        //         glClear(GL_COLOR_BUFFER_BIT);
+        // }
 
-        //         window.swapBuffers();
-        //     }
+        // if (new_render) {
+        // glClear(GL_COLOR_BUFFER_BIT);
+
+        // window.swapBuffers();
+        // }
         // }
     }
 

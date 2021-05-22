@@ -5,6 +5,8 @@ import javax.swing.ImageIcon;
 import com.shich.game.collision.AABB;
 import com.shich.game.level.*;
 import com.shich.game.render.*;
+import com.shich.game.util.Input;
+import com.shich.game.util.Timer;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -12,14 +14,14 @@ import org.joml.Vector3f;
 public class Entity {
 
     protected AABB bounding_box;
+    protected Vector3f position;
 
-    protected Vector2f scale;
     protected Model model;
     protected Texture texture;
-    
 
     public Entity(AABB bounds) {
         bounding_box = bounds;
+        position = new Vector3f(bounds.center);
     }
 
     public Entity(AABB bounds, String texture_file) {
@@ -27,46 +29,44 @@ public class Entity {
         renderSetup(texture_file);
     }
 
-    protected void renderSetup(String texture_file) {
-        float[] vertices = new float[] {
-            -1f, 1f, 0,
-            1f, 1f, 0,
-            1f, -1f, 0,
-            -1f, -1f, 0,
-        };
+    public void renderSetup(String texture_file) {
+        float[] vertices = new float[] { -0.5f, 0.5f, 0, 0.5f, 0.5f, 0, 0.5f, -0.5f, 0, -0.5f, -0.5f, 0, };
 
-        float[] texCoords = new float[] {
-            0,0,
-            1,0,
-            1,1,
-            0,1,
-        };
+        float[] texCoords = new float[] { 0, 0, 1, 0, 1, 1, 0, 1, };
 
-        int[] indices = new int[] {
-            0,1,2,
-            2,3,0,
-        };
+        int[] indices = new int[] { 0, 1, 2, 2, 3, 0, };
 
         this.model = new Model(vertices, texCoords, indices);
         this.texture = new Texture(texture_file);
     }
 
-
-    public void input() {
+    public void input(Input input) {
     }
 
-    public void update(double deltaTime) {
+    public void update(Timer timer) {
     }
 
-    public void render() {
-        texture.bind();
-        model.render();
+    public void render(Renderer renderer) {
+        renderer.render(model, position, texture);
     }
 
-    public float getX() { return bounding_box.center.x; }
-    public float getY() { return bounding_box.center.y; }
+    public float getX() {
+        return bounding_box.center.x;
+    }
 
-    public void setPos(float x, float y) {
-        bounding_box.center.set(x, y);
+    public float getY() {
+        return bounding_box.center.y;
+    }
+
+    public void setPos(float x, float y, float z) {
+        position.set(x, y, z);
+    }
+
+    public Vector3f getPos() {
+        return position;
+    }
+
+    public void setPos2D(float x, float y) {
+        bounding_box.center.set(x, y, 0);
     }
 }

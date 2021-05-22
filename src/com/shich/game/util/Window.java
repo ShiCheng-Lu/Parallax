@@ -3,11 +3,9 @@ package com.shich.game.util;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
-
 
 public class Window {
 
@@ -16,10 +14,9 @@ public class Window {
     private int width, height;
     private String title;
 
-    private Input input;
     private boolean fullscreen;
     public boolean size_changed;
-    
+
     private int frame_couter = 0;
     private double time;
 
@@ -31,6 +28,8 @@ public class Window {
 
         this.title = title;
         this.fullscreen = false;
+
+        this.time = 0;
 
         createWindow();
 
@@ -44,8 +43,6 @@ public class Window {
         };
 
         glfwSetWindowSizeCallback(window, change_size);
-
-        time = getTime();
     }
 
     public Window(int width, int height, String title, boolean maximize) {
@@ -65,12 +62,11 @@ public class Window {
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
 
-        glfwSwapInterval(1);    // set fps
+        glfwSwapInterval(1); // set fps
         glfwShowWindow(window);
 
         setBackgroundColour(0, 0, 0);
 
-        input = new Input(window);
         glEnable(GL_TEXTURE_2D);
     }
 
@@ -88,9 +84,13 @@ public class Window {
         glfwSetWindowPos(window, xpos, ypos);
     }
 
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
-    public Input getInput() { return input; }
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 
     public boolean shouldClose() {
         return glfwWindowShouldClose(window);
@@ -117,23 +117,18 @@ public class Window {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    public void input() {
+    public void input(Input input) {
         // fullscreen, not used
         // if (input.isKeyPressed(input.FULLSCREEN)) {
-        //     setFullScreen(!fullscreen);
+        // setFullScreen(!fullscreen);
         // }
 
         if (input.isKeyPressed(input.EXIT)) {
             setShouldClose(true);
         }
-        
-        if (input.isKeyReleased(GLFW_KEY_A)) {
-            System.out.println("A key pressed");
-        }
     }
 
-    public void update() {
-        input.update();
+    public void update(Timer timer) {
         glfwPollEvents();
 
         if (size_changed) {
@@ -142,22 +137,15 @@ public class Window {
 
         // frame counter
         frame_couter++;
-        double current_time = getTime();
+        double current_time = timer.getTime();
         if (current_time > time + 1) {
             time = current_time;
-            System.out.println("FPS:" + frame_couter);
-            
             glfwSetWindowTitle(window, "Parallax    FPS: " + frame_couter);
             frame_couter = 0;
         }
     }
 
     public void destroy() {
-        input.freeCallbacks();
         glfwTerminate();
-    }
-
-    public static double getTime() {
-        return (double) System.nanoTime() / 1000000000;
     }
 }

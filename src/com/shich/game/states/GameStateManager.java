@@ -2,6 +2,7 @@ package com.shich.game.states;
 
 import java.util.ArrayList;
 
+import com.shich.game.render.Renderer;
 import com.shich.game.util.Input;
 
 public class GameStateManager {
@@ -10,7 +11,7 @@ public class GameStateManager {
      */
     private ArrayList<GameState> states = new ArrayList<GameState>();
 
-    public GameStateManager(GamePanel game) {
+    public GameStateManager() {
         states.add(new MenuState(this));
     }
 
@@ -22,9 +23,9 @@ public class GameStateManager {
         states.get(0).input(input);
     }
 
-    public void render() {
+    public void render(Renderer renderer) {
         for (GameState state : states) {
-            state.render();
+            state.render(renderer);
         }
     }
 

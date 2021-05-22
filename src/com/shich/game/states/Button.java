@@ -8,10 +8,11 @@ import org.joml.Vector2f;
 
 public class Button extends Entity {
 
-
     private boolean clicked;
+
     /**
      * Create a button that with the shape
+     * 
      * @param shape
      */
     public Button(AABB bounds, GameState gs) {
@@ -21,15 +22,17 @@ public class Button extends Entity {
 
     /**
      * handles inputs from user
-     * @param key key inputs
+     * 
+     * @param key   key inputs
      * @param mouse mouse inputs
      */
     public void input(Input inputs) {
-        
+
     }
 
     /**
      * check if this button was clicked
+     * 
      * @return true if the button was clicked
      */
     public boolean clicked() {
@@ -42,6 +45,7 @@ public class Button extends Entity {
 
     /**
      * display the button on screen
+     * 
      * @param g graphic to display the button on
      */
     public void render() {

@@ -18,9 +18,9 @@ public class Texture {
         width = BufferUtils.createIntBuffer(1);
         height = BufferUtils.createIntBuffer(1);
         channels = BufferUtils.createIntBuffer(1);
-        
+
         ByteBuffer image = STBImage.stbi_load("res/graphics/" + texture_file, width, height, channels, 0);
-        
+
         if (image != null) {
             texture_id = glGenTextures();
             glBindTexture(GL_TEXTURE_2D, texture_id);
