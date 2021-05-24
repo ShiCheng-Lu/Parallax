@@ -20,6 +20,16 @@ public class AABB { // axis aligned bounding box
         this(x, y, 0, width, height, 0);
     }
 
+    public boolean getCollision(AABB other) {
+        Vector3f distance = new Vector3f();
+
+        distance.add(other.center).sub(center);
+        distance.absolute();
+        distance.sub(half_extent).sub(other.half_extent);
+
+        return (distance.x < 0 && distance.y < 0);
+    }
+
     public Collision getCollision(AABB other, Vector3f other_dir) {
 
         Vector3f original_half_extent = new Vector3f(half_extent);
@@ -30,7 +40,7 @@ public class AABB { // axis aligned bounding box
 
         half_extent = original_half_extent;
 
-        if (result.time <= 1 && result.time >= -0.0001f) {
+        if (result.time >= 0 && result.time < 1) {
             return result;
         } else {
             return new Collision(false, null, 0);
@@ -78,15 +88,15 @@ public class AABB { // axis aligned bounding box
         Vector3f normal = new Vector3f();
         if (t_near.x > t_near.y) {
             if (direction.x > 0) {
-                normal = new Vector3f(-1, 0, 0);
+                normal = new Vector3f(1, 0, 0);
             } else {
-                normal = new Vector3f(-1, 0, 0);
+                normal = new Vector3f(1, 0, 0);
             }
         } else if (t_near.x < t_near.y) {
             if (direction.y > 0) {
-                normal = new Vector3f(0, -1, 0);
+                normal = new Vector3f(0, 1, 0);
             } else {
-                normal = new Vector3f(0, -1, 0);
+                normal = new Vector3f(0, 1, 0);
             }
         }
 

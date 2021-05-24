@@ -3,6 +3,7 @@ package com.shich.game;
 import static org.lwjgl.glfw.GLFW.*;
 
 import com.shich.game.collision.AABB;
+import com.shich.game.collision.Collision;
 import com.shich.game.entities.Entity;
 import com.shich.game.entities.Player;
 import com.shich.game.level.Block;
@@ -54,7 +55,6 @@ public class Main implements Runnable {
         renderer = new Renderer(shader, camera);
         timer = new Timer();
 
-        player = new Player(new AABB(0, -4, 1, 1), null);
         gsm = new GameStateManager(camera);
         Block.init();
     }
@@ -62,7 +62,44 @@ public class Main implements Runnable {
     @Override
     public void run() {
         init();
+        
+        AABB a = new AABB(0, 0, 1, 1);
+        Entity e = new Entity(a, "block/block-1.png");
+        Entity y = new Entity(a, "block/block-1.png");
+        Entity p = new Entity(new AABB(-1.0f, -1.0f, 1f, 1f), "block/block-1");
+        Entity v = new Entity(new AABB(0, 0, 1f, 1f), "block/block-1");
+        Entity z = new Entity(new AABB(0, 0, 0.1f, 0.1f), "block/block-1.png");
+
         while (!window.shouldClose()) {
+            // if (input.isButtonDown(input.MOUSE_LEFT)) {
+            //     Vector3f direction = new Vector3f();
+            //     direction.set(input.mouse_pos);
+
+            //     v.setPos(direction);
+            //     direction.sub(p.getPos());
+
+            //     Collision col = a.getCollision(p.bounding_box, direction);
+            //     if (col.intersects) {
+            //         y.render(renderer);
+
+            //         Vector3f newDir = direction.sub(col.normal.mul(direction.mul(1 - col.time, new Vector3f())));
+
+            //         v.setPos(new Vector3f(p.getPos()).add(newDir));
+            //         z.setPos(col.normal);
+            //         z.render(renderer);
+            //     }
+            // }
+            // if (input.isButtonPressed(input.MOUSE_RIGHT)) {
+            //     p.setPos(input.mouse_pos);
+            // }
+
+
+
+            // e.render(renderer);
+            // p.render(renderer);
+            // v.render(renderer);
+            // window.swapBuffers();
+            
             input(input);
             update(timer);
             render(renderer);
@@ -106,48 +143,6 @@ public class Main implements Runnable {
 
     public static void main(String[] args) {
         new Main().start();
-
-        // double frame_cap = 1.0 / mode.refreshRate();
-        // double last_update_time = Timer.getTime();
-        // double current_time = last_update_time;
-        // double unprecessed = 0;
-
-        // boolean new_render = false;
-
-        // double frame_time = 0;
-        // int frame_count = 0;
-
-        // while (!window.shouldClose()) {
-        // current_time = Timer.getTime();
-        // unprecessed += current_time - last_update_time;
-        // last_update_time = current_time;
-
-        // while (unprecessed >= frame_cap) {
-        // unprecessed -= frame_cap;
-        // // frame counter,
-        // frame_time += frame_cap;
-        // frame_count += 1;
-        // if (frame_time >= 1) {
-        // System.out.println("FPS: " + frame_count);
-        // frame_count = 0;
-        // frame_time = 0;
-        // }
-        // // update
-        // new_render = true;
-        // window.update(frame_cap);
-        // if (window.getInput().isKeyDown(GLFW_KEY_LEFT_CONTROL) &&
-        // window.getInput().isKeyPressed(GLFW_KEY_W)) {
-        // window.setShouldClose(true);
-        // }
-
-        // }
-
-        // if (new_render) {
-        // glClear(GL_COLOR_BUFFER_BIT);
-
-        // window.swapBuffers();
-        // }
-        // }
     }
 
 }

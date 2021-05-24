@@ -23,7 +23,7 @@ public class MenuState extends GameState {
             @Override
             public void released() {
                 PlayState ps = new PlayState(gsm);
-                ps.loadLevel("level-3");
+                ps.loadLevel("level-4");
                 gsm.addState(ps);
             }
         };

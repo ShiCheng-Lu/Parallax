@@ -74,7 +74,7 @@ public class Level {
                 // encode layer definitions
                 output += layer.width + " ";
                 output += layer.height + " ";
-                output += layer.collisionMod + " ";
+                output += layer.scale + " ";
                 // encode layer datad
                 for (int x = 0; x < layer.width; ++x) {
                     for (int y = 0; y < layer.height; ++y) {
@@ -107,7 +107,8 @@ public class Level {
                 int height = fileReader.nextInt();
                 int movementMod = fileReader.nextInt();
                 String data = fileReader.nextLine().strip();
-                Layer layer = new Layer(this, width, height, new Matrix4f().scale(1.0f/movementMod));
+                
+                Layer layer = new Layer(this, width, height, movementMod);
 
                 int index = 0;
                 for (int x = 0; x < width; ++x) {

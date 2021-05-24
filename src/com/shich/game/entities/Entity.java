@@ -13,7 +13,7 @@ import org.joml.Vector3f;
 
 public class Entity {
 
-    protected AABB bounding_box;
+    public AABB bounding_box;
     protected Vector3f position;
 
     protected Model model;
@@ -75,5 +75,9 @@ public class Entity {
 
     public void setPos2D(float x, float y) {
         bounding_box.center.set(x, y, 0);
+    }
+
+    public void setPos(Vector3f direction) {
+        position.set(direction);
     }
 }

@@ -49,7 +49,7 @@ public class Camera {
 
     public Vector3f reverseProjection(Vector3f input_pos) {
         Vector3f result = new Vector3f();
-        input_pos.mul(1.0f/128, result);
+        input_pos.div(128, result);
         position.sub(result, result);
         return result;
     }

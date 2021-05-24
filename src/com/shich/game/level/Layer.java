@@ -15,16 +15,15 @@ public class Layer {
     protected byte[][] tiles;
     protected AABB[][] bounds;
 
-    public Matrix4f collisionMod, collisionModinverted;
+    public int scale;
 
     protected ArrayList<Entity> assets = new ArrayList<Entity>();
 
-    public Layer(Level level, int width, int height, Matrix4f collisionMod) {
+    public Layer(Level level, int width, int height, int scale) {
         this.level = level;
         this.width = width;
         this.height = height;
-        this.collisionMod = collisionMod;
-        collisionModinverted = collisionMod.invert(new Matrix4f());
+        this.scale = scale;
 
         tiles = new byte[width][height];
         bounds = new AABB[width][height];
@@ -33,7 +32,7 @@ public class Layer {
     public void set(int x, int y, byte type) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
             tiles[x][y] = type;
-            bounds[x][y] = new AABB(x, y, 1, 1);
+            bounds[x][y] = new AABB(x * scale, y * scale, scale * 2 - 1, scale * 2 - 1);
         }
     }
 

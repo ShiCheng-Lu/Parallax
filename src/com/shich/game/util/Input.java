@@ -66,7 +66,7 @@ public class Input {
             public void invoke(long window, double xpos, double ypos) {
                 float width = Input.this.window.getWidth();
                 float height = Input.this.window.getHeight();
-                mouse_pos = camera.reverseProjection(new Vector3f((float) xpos - width / 2, (float) ypos - height / 2, 0));
+                mouse_pos = camera.reverseProjection(new Vector3f((float) - xpos + width / 2, (float) ypos - height / 2, 0));
             }
         };
 

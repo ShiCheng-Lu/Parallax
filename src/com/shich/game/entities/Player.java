@@ -103,6 +103,9 @@ public class Player extends Mob {
         // } else {
         // jumpHeld = false;
         // }
+        if (input.isButtonPressed(input.MOUSE_RIGHT)) {
+            System.out.println(position);
+        }
 
     }
 
@@ -118,6 +121,7 @@ public class Player extends Mob {
         } else {
             velocity.y -= 0.2;
         }
+        velocity.mul(0.8f);
     }
 
     public void setLevel(Level level) {
