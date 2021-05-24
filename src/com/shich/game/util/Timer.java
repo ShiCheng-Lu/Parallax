@@ -4,14 +4,16 @@ public class Timer {
     
     public float delta;
     private long last_update_time;
+    private float targetDelta;
 
     public Timer() {
-        
+        targetDelta = 1.0f / 60;
     }
 
     public void update() {
         long current_time = System.nanoTime();
         delta = ns_to_s(current_time - last_update_time);
+        last_update_time = current_time;
     }
 
     public float getTime() {

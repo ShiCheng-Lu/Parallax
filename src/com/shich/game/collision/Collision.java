@@ -4,11 +4,15 @@ import org.joml.Vector3f;
 
 // help with collision resolution
 public class Collision {
-    public Vector3f distance;
     public boolean intersects;
+    public Vector3f normal;
+    public float time;
+    public Vector3f contact_loc;
 
-    public Collision(Vector3f distance) {
-        this.distance = distance;
-        intersects = (distance.x < 0 && distance.y < 0 && distance.z < 0);
+    public Collision(boolean intersects, Vector3f normal, float time) {
+        this.intersects = intersects;
+        this.normal = normal;
+        this.time = time;
+        // this.contact_loc = contact_loc;
     }
 }

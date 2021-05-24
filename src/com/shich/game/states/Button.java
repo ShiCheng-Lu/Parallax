@@ -1,23 +1,28 @@
 package com.shich.game.states;
 
+import java.util.function.Function;
+
 import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
+import com.shich.game.render.Renderer;
 import com.shich.game.util.Input;
 
-import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 public class Button extends Entity {
 
-    private boolean clicked;
+    private boolean canActivate;
+    private boolean hovered;
 
     /**
-     * Create a button that with the shape
+     * create a button
      * 
-     * @param shape
+     * @param bounds
+     * @param gs
      */
-    public Button(AABB bounds, GameState gs) {
-        super(bounds);
-        clicked = false;
+    public Button(AABB bounds, String texture_file) {
+        super(bounds, texture_file);
+        hovered = false;
     }
 
     /**
@@ -26,28 +31,28 @@ public class Button extends Entity {
      * @param key   key inputs
      * @param mouse mouse inputs
      */
-    public void input(Input inputs) {
+    public void input(Input input) {
+        if (bounding_box.contains(input.mouse_pos)) {
+            if (input.isButtonPressed(input.MOUSE_LEFT)) {
+                canActivate = true;
+                pressed();
 
-    }
-
-    /**
-     * check if this button was clicked
-     * 
-     * @return true if the button was clicked
-     */
-    public boolean clicked() {
-        if (clicked) {
-            clicked = false;
-            return true;
+            }
+            if (canActivate && input.isButtonReleased(input.MOUSE_LEFT)) {
+                released();
+            }
+            hovered = true;
+        } else {
+            canActivate = false;
+            hovered = false;
         }
-        return false;
     }
 
-    /**
-     * display the button on screen
-     * 
-     * @param g graphic to display the button on
-     */
-    public void render() {
+    public void render(Renderer renderer) {
+        super.render(renderer);
     }
+
+    public void pressed() {}
+
+    public void released() {}
 }

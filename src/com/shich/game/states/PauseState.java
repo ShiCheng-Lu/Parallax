@@ -2,6 +2,7 @@ package com.shich.game.states;
 
 import com.shich.game.render.Renderer;
 import com.shich.game.util.Input;
+import com.shich.game.util.Timer;
 
 public class PauseState extends GameState {
 
@@ -19,7 +20,7 @@ public class PauseState extends GameState {
     }
 
     @Override
-    public void update(double deltaTime) {
+    public void update(Timer timer) {
 
     }
 

@@ -14,6 +14,9 @@ public class Player extends Mob {
     public Player(AABB bounds, Level level) {
         super(bounds, level);
         renderSetup("player.png");
+
+        velocityMax = new Vector3f(10, 10, 0);
+        accerlation = new Vector3f(2, 2, 0);
         // //
         // xVelMax = 0.15;
         // yVelMax = 0.3;
@@ -66,18 +69,17 @@ public class Player extends Mob {
 
     public void input(Input input) {
         if (input.isKeyDown(input.LEFT)) {
-            position.add(new Vector3f(-0.1f, 0, 0));
+            velocity.x = Math.max(velocity.x - accerlation.x, -velocityMax.x);
         }
         if (input.isKeyDown(input.RIGHT)) {
-            position.add(new Vector3f(0.1f, 0, 0));
+            velocity.x = Math.min(velocity.x + accerlation.x, velocityMax.x);
         }
         if (input.isKeyDown(input.UP)) {
-            position.add(new Vector3f(0, 0.1f, 0));
+            velocity.y = Math.min(velocity.y + accerlation.y, velocityMax.y);
         }
         if (input.isKeyDown(input.DOWN)) {
-            position.add(new Vector3f(0, -0.1f, 0));
+            velocity.y = Math.max(velocity.y - accerlation.y, -velocityMax.x);
         }
-
         // if (dashTimer == 0) {
         // if (input.isKeyDown(GLFW_KEY_W)) {
         // velocity.x += accerlation.x;
@@ -95,44 +97,30 @@ public class Player extends Mob {
         // if (onGround || coyoteTimer > 0) {
         // jump();
         // }
-        // }
+        // }a
         // if (key.jump.pressed() && jumpHeld) {
         // // extend jump
         // } else {
         // jumpHeld = false;
         // }
+
     }
 
-    public void update(Timer timer, Layer layer) {
+    
+
+    public void update(Timer timer) {
+        
         super.update(timer);
-
-        layer.collisionMod.transformPosition(position);
-
-        int lowerX = (int) Math.floor(bounding_box.getMinX());
-        int upperX = (int) Math.ceil(bounding_box.getMaxX());
-        int lowerY = (int) Math.floor(bounding_box.getMinY());
-        int upperY = (int) Math.ceil(bounding_box.getMaxY());
-
-        for (int x = lowerX; x <= upperX; ++x) {
-            for (int y = lowerY; x <= upperY; ++y) {
-
-                byte type = layer.get(x, y);
-                if (type != 0) {
-                    AABB bounds = layer.getBoundingBox(x, y);
-
-                    Collision collision = bounding_box.getCollision(bounds);
-
-                    if (collision.intersects) {
-                        bounding_box.correctPosition(bounds, collision);
-                    }
-                }
-
-            }
+        
+        if (position.y < 0) {
+            velocity.y = 0;
+            position.y = 0;
+        } else {
+            velocity.y -= 0.2;
         }
+    }
 
-        layer.collisionModinverted.transformPosition(position);
-        if (position != bounding_box.center) {
-            System.out.println("desynced??");
-        }
+    public void setLevel(Level level) {
+        this.level = level;
     }
 }

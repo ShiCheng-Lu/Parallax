@@ -8,8 +8,6 @@ import com.shich.game.entities.Player;
 import com.shich.game.level.Block;
 import com.shich.game.level.Layer;
 import com.shich.game.level.Level;
-import com.shich.game.util.KeyHandler;
-import com.shich.game.util.MouseHandler;
 
 public class CreateState extends GameState {
 
@@ -77,15 +75,15 @@ public class CreateState extends GameState {
             }
         }
 
-        public void input(KeyHandler key, MouseHandler mouse) {
+        public void input(Input input) {
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
-                    inputs[x][y].input(key, mouse);
+                    inputs[x][y].input(input);
                 }
             }
         }
 
-        public void update(double deltaTime) {
+        public void update(Timer timer) {
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
                     layer.set(x, width - y - 1, inputs[x][y].state);
@@ -93,7 +91,7 @@ public class CreateState extends GameState {
             }
         }
 
-        public void render(Graphics g) {
+        public void render(Renderer renderer) {
             for (int x = 0; x < width; ++x) {
                 for (int y = 0; y < height; ++y) {
                     inputs[x][y].render();

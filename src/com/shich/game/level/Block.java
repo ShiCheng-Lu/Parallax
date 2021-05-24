@@ -16,7 +16,7 @@ public class Block extends Entity {
     public char type;
 
     public Block(Byte id, String texture_file) {
-        super(new AABB(0, 0, 0, 0), texture_file);
+        super(new AABB(0, 0, 1, 1), texture_file);
         this.id = id;
         block_set.put(id, this);
     }
@@ -26,7 +26,11 @@ public class Block extends Entity {
     }
 
     public static void render(Renderer renderer, byte id, Vector3f offset) {
-        block_set.get(id).render(renderer, offset);
+        Block block = block_set.get(id);
+        if (block != null) {
+            block.render(renderer, offset);
+        }
+        
     }
 
     public void render(Renderer renderer, Vector3f offset) {

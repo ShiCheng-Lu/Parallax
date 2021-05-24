@@ -18,19 +18,11 @@ public class Renderer {
     }
 
     public void render(Model model, Vector3f position, Texture texture) {
-        Matrix4f final_projection = new Matrix4f();
-        
-        camera.getProjection().translate(position, final_projection);
-        // Vector3f rel_pos = new Vector3f();
-
-        // System.out.println("cam" + camera.getPosition());
-        
-        // camera.getProjection().translate(abs_pos, new Matrix4f());
-
         shader.bind();
         texture.bind();
 
-        shader.setUniform("projection", final_projection);
+        shader.setUniform("tex", 0);
+        shader.setUniform("projection", camera.getProjection(position));
         renderModel(model);
 
         texture.unbind();

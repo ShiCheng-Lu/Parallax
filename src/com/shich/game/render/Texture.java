@@ -31,7 +31,6 @@ public class Texture {
         } else {
             System.out.println("texture not found: " + texture_file);
         }
-        System.out.println(width.get(0) + "  -  " + height.get(0));
     }
 
     public void bind() {

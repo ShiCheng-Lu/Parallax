@@ -64,6 +64,10 @@ public class Shader {
     }
 
     public void destroy() {
+        glDetachShader(program, vert);
+        glDetachShader(program, frag);
+        glDeleteShader(vert);
+        glDeleteShader(frag);
         glDeleteProgram(program);
     }
 
@@ -79,6 +83,15 @@ public class Shader {
             e.printStackTrace();
         }
         return result.toString();
+    }
+
+    public void setUniform(String name, int value) {
+        int location = glGetUniformLocation(program, name);
+        if (location != -1) {
+            glUniform1i(location, value);
+        } else {
+            System.out.println(name);
+        }
     }
 
     public void setUniform(String name, Matrix4f value) {

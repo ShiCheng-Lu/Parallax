@@ -21,7 +21,7 @@ public class Entity {
 
     public Entity(AABB bounds) {
         bounding_box = bounds;
-        position = new Vector3f(bounds.center);
+        position = bounds.center;
     }
 
     public Entity(AABB bounds, String texture_file) {
@@ -30,7 +30,14 @@ public class Entity {
     }
 
     public void renderSetup(String texture_file) {
-        float[] vertices = new float[] { -0.5f, 0.5f, 0, 0.5f, 0.5f, 0, 0.5f, -0.5f, 0, -0.5f, -0.5f, 0, };
+        float width = bounding_box.half_extent.x;
+        float height = bounding_box.half_extent.y;
+
+        float[] vertices = new float[] { 
+            -width, height, 0, 
+            width, height, 0,
+            width, -height, 0,
+            -width, -height, 0, };
 
         float[] texCoords = new float[] { 0, 0, 1, 0, 1, 1, 0, 1, };
 

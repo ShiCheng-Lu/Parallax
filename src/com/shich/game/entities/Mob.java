@@ -1,6 +1,7 @@
 package com.shich.game.entities;
 
 import com.shich.game.collision.*;
+import com.shich.game.level.Layer;
 import com.shich.game.level.Level;
 import com.shich.game.util.Timer;
 
@@ -34,34 +35,51 @@ public class Mob extends Entity {
         super(bounds);
         this.level = level;
 
-        position = new Vector3f();
+        position = bounds.center;
         velocity = new Vector3f();
         accerlation = new Vector3f();
     }
 
+    private void collideWithLayer(Layer layer, Timer timer) {
+        layer.collisionMod.transformPosition(position);
+
+        float closest_time = 1;
+        Collision closest_collision = null;
+
+        for (int x = (int) position.x - 2; x <= (int) position.x + 2; ++x) {
+            for (int y = (int) position.y - 2; y <= (int) position.y + 2; ++y) {
+
+                byte type = layer.get(x, y);
+                if (type != (byte) 0) {
+                    AABB bounds = layer.getBoundingBox(x, y);
+
+                    Collision collision = bounds.getCollision(bounding_box, velocity.mul(timer.delta, new Vector3f()));
+
+                    if (collision.intersects && collision.time < closest_time) {
+                        closest_collision = collision;
+                    }
+                }
+            }
+        }
+        layer.collisionModinverted.transformPosition(position);
+
+        if (closest_collision != null) {
+            Vector3f vel_dif = closest_collision.normal.mul(velocity).mul(1 - closest_collision.time);
+            System.out.println(position);
+            
+            System.out.println(vel_dif);
+            System.out.println(velocity);
+
+            
+            velocity.add(vel_dif);
+        }
+    }
+
     public void update(Timer timer) {
-        super.update(timer);
-        position.add(velocity.mul(timer.delta));
-
-        // position.add(velocity.mul(deltaTime));
-
-        // int lowerX = (int) Math.floor(bounding_box.getMinX());
-        // int upperX = (int) Math.ceil(bounding_box.getMaxX());
-        // int lowerY = (int) Math.floor(bounding_box.getMinY());
-        // int upperY = (int) Math.ceil(bounding_box.getMaxY());
-
-        // for (int x = lowerX; x <= upperX; ++x) {
-        //     for (int y = lowerY; x <= upperY; ++y) {
-                
-        //         byte type = level.getBlockType(x, y);
-        //         AABB bounds = level.getBoundingBox(x, y);
-
-        //         Collision collision = bounding_box.getCollision(bounds);
-
-        //         if (collision.intersects) {
-        //             bounding_box.correctPosition(bounds, collision);
-        //         }
-        //     }
-        // }
+        for (int i = 0; i < level.layerNum; ++i) {
+            collideWithLayer(level.getLayer(i), timer);
+        }
+        position.add(velocity.mul(timer.delta, new Vector3f()));
+        velocity.mul(0.9f);
     }
 }

@@ -12,6 +12,7 @@ import com.shich.game.render.Model;
 import com.shich.game.render.Renderer;
 import com.shich.game.render.Shader;
 import com.shich.game.render.Texture;
+import com.shich.game.states.GameStateManager;
 import com.shich.game.util.*;
 
 import org.joml.Matrix4f;
@@ -27,9 +28,10 @@ public class Main implements Runnable {
     private Renderer renderer;
     private Timer timer;
 
+    private GameStateManager gsm;
+
     // temps
-    private Player e;
-    private Level l;
+    private Player player;
 
     public void start() {
         game = new Thread(this, "game thread");
@@ -45,27 +47,21 @@ public class Main implements Runnable {
         }
 
         window = new Window(1920, 1080, "Parallax", true);
-        input = new Input(window.window);
+        window.setBackgroundColour(1, 1, 1);
         shader = new Shader("shaders/shader");
         camera = new Camera(window);
+        input = new Input(window, camera);
         renderer = new Renderer(shader, camera);
         timer = new Timer();
 
-        window.setBackgroundColour(1, 1, 1);
+        player = new Player(new AABB(0, -4, 1, 1), null);
+        gsm = new GameStateManager(camera);
+        Block.init();
     }
 
     @Override
     public void run() {
         init();
-
-        l = new Level();
-        l.load("level-3");
-
-        Block.init();
-
-        e = new Player(new AABB(1, 1, 0.5f, 0.5f), l);
-        e.renderSetup("player.png");
-
         while (!window.shouldClose()) {
             input(input);
             update(timer);
@@ -75,35 +71,36 @@ public class Main implements Runnable {
     }
 
     public void input(Input input) {
-        if (input.isButtonPressed(GLFW_MOUSE_BUTTON_1)) {
-            System.out.println("pos: " + e.getPos() + "    camera: " + camera.getPosition());
+        if (input.isButtonPressed(input.MOUSE_LEFT)) {
+            System.out.println(input.mouse_pos);
         }
 
-        e.input(input);
+        gsm.input(input);
         window.input(input);
     }
 
     public void update(Timer timer) {
-        timer.update();
-
-        camera.setPosition(e.getPos());
-
-        e.update(timer);
-
         input.update();
+        timer.update();
         camera.update();
+
+        gsm.update(timer);
+        
         window.update(timer);
+
+        if (gsm.states.isEmpty()) {
+            window.shouldClose();
+        }
     }
 
     public void render(Renderer renderer) {
-        e.render(renderer);
-        l.render(renderer, e);
+        gsm.render(renderer);
 
         window.swapBuffers();
     }
 
     public void destroy() {
-        input.freeCallbacks();
+        input.destroy();
         window.destroy();
     }
 

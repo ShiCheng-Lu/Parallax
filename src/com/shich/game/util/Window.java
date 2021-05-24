@@ -123,9 +123,9 @@ public class Window {
         // setFullScreen(!fullscreen);
         // }
 
-        if (input.isKeyPressed(input.EXIT)) {
-            setShouldClose(true);
-        }
+        // if (input.isKeyPressed(input.EXIT)) {
+        //     setShouldClose(true);
+        // }
     }
 
     public void update(Timer timer) {

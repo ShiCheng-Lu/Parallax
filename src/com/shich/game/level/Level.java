@@ -33,8 +33,12 @@ public class Level {
 
     public void render(Renderer renderer, Player player) {
         for (int i = layerNum - 1; i >= 0; --i) {
-            layers.get(i).render(renderer, player.getPos().mul(-1/(i + 1), new Vector3f()));
+            layers.get(i).render(renderer, player.getPos().mul(i/(i + 1.0f), new Vector3f()));
         }
+    }
+
+    public Layer getLayer(int i) {
+        return layers.get(i);
     }
 
     public void set(int layer, int x, int y, byte type) {
@@ -103,12 +107,14 @@ public class Level {
                 int height = fileReader.nextInt();
                 int movementMod = fileReader.nextInt();
                 String data = fileReader.nextLine().strip();
-                Layer layer = new Layer(this, width, height, new Matrix4f().scale(1 / movementMod));
+                Layer layer = new Layer(this, width, height, new Matrix4f().scale(1.0f/movementMod));
 
                 int index = 0;
                 for (int x = 0; x < width; ++x) {
                     for (int y = 0; y < height; ++y) {
-                        layer.set(x, y, (byte) (data.charAt(index) - '0'));
+                        byte blockType = (byte) (data.charAt(index) - '0');
+                        layer.set(x, y, blockType);
+
                         index++;
                     }
                 }

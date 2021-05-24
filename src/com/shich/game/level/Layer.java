@@ -33,6 +33,7 @@ public class Layer {
     public void set(int x, int y, byte type) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
             tiles[x][y] = type;
+            bounds[x][y] = new AABB(x, y, 1, 1);
         }
     }
 
@@ -52,10 +53,9 @@ public class Layer {
             }
         }
 
-        for (Entity e : assets) {
-            e.render(renderer);
-        }
-        // g.drawRect(camX, camY - (height - 1) * 32, width * 32, height * 32);
+        // for (Entity e : assets) {
+        //     e.render(renderer);
+        // }
     }
 
     public AABB getBoundingBox(int x, int y) {
