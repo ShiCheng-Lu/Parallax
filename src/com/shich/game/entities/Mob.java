@@ -1,8 +1,13 @@
 package com.shich.game.entities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.shich.game.collision.*;
+import com.shich.game.level.Block;
 import com.shich.game.level.Layer;
 import com.shich.game.level.Level;
+import com.shich.game.render.Renderer;
 import com.shich.game.util.Timer;
 
 import org.joml.Vector2f;
@@ -10,6 +15,7 @@ import org.joml.Vector3f;
 
 public class Mob extends Entity {
 
+    private static Renderer renderer;
     protected Vector3f velocity;
     protected Vector3f accerlation;
     protected Vector3f velocityMax;
@@ -31,7 +37,6 @@ public class Mob extends Entity {
 
     protected Level level;
 
-    
     protected Vector3f old_pos;
 
     public Mob(AABB bounds, Level level) {
@@ -43,42 +48,38 @@ public class Mob extends Entity {
         accerlation = new Vector3f();
     }
 
-    private void collideWithLayer(Layer layer, Timer timer) {
-        layer.collisionMod.transformPosition(position);
-        layer.collisionMod.transformPosition(velocity);
+    private void collideWithLayer(Layer layer, Timer timer, Vector3f mod_pos, Vector3f mod_vel) {
+        // layer.collisionMod.transformPosition(position);
+        // layer.collisionMod.transfordwmPosition(velocity);
+        mod_vel.mul(timer.delta);
+        // float closest_time = 1;
+        ArrayList<Collision> collisions = new ArrayList<>();
 
-        float closest_time = 1;
-        Collision closest_collision = null;
-
-        for (int x = (int) position.x - 2; x <= (int) position.x + 2; ++x) {
-            for (int y = (int) position.y - 2; y <= (int) position.y + 2; ++y) {
+        for (int x = (int) mod_pos.x - 1; x <= (int) mod_pos.x + 2; ++x) {
+            for (int y = (int) mod_pos.y - 1; y <= (int) mod_pos.y + 2; ++y) {
 
                 byte type = layer.get(x, y);
                 if (type != (byte) 0) {
                     AABB bounds = layer.getBoundingBox(x, y);
 
-                    Collision collision = bounds.getCollision(bounding_box, velocity.mul(timer.delta, new Vector3f()));
-
-                    if (collision.intersects && collision.time < closest_time) {
-
-                        Vector3f vel_dif = collision.normal.mul(velocity).mul(1 - collision.time);
-                        velocity.add(vel_dif);
-                        closest_collision = collision;
-                    }
+                    Collision collision = bounds.getCollision(bounding_box, mod_vel);
+                    collisions.add(collision);
                 }
             }
         }
-        layer.collisionModinverted.transformPosition(velocity);
-        layer.collisionModinverted.transformPosition(position);
 
-        // if (closest_collision != null) {
-        // System.out.println(position);
-
-        // System.out.println(vel_dif);
-        // System.out.println(velocity);
-
-        // velocity.add(vel_dif);
-        // }
+        collisions.sort(null);
+        for (Collision c : collisions) {
+            // collide and update velocity
+            Collision new_c = c.target.getCollision(bounding_box, mod_vel);
+            if (new_c.intersects) {
+                mod_vel.sub(new_c.normal.mul(mod_vel).mul(1 - new_c.time));
+                Block.render(renderer, (byte)1, new Vector3f(new_c.target.center));
+            }
+            
+            Block.render(renderer, (byte)2, new Vector3f(new_c.target.center));
+        }
+        mod_vel.div(timer.delta);
     }
 
     public void collideX(int i) {
@@ -130,14 +131,24 @@ public class Mob extends Entity {
     public void update(Timer timer) {
         old_pos = new Vector3f(position);
 
-        position.add(velocity.x * timer.delta, 0, 0);
-        for (int i = 0; i < level.layerNum; ++i) {
-            collideX(i);
-        }
+        for (int i = 3; i < level.layerNum; ++i) {
+            Vector3f mod_pos = position.div(i + 1, new Vector3f());
+            Vector3f mod_vel =  velocity.div(i + 1, new Vector3f());
+            collideWithLayer(level.getLayer(i), timer, mod_pos, mod_vel);
+            velocity = mod_vel.mul(i + 1);
 
-        position.add(0, velocity.y * timer.delta, 0);
-        for (int i = 0; i < level.layerNum; ++i) {
-            collideY(i);
+            if (Math.abs(mod_vel.x) < Math.abs(velocity.x)) {
+                velocity.x = mod_vel.x;
+            }
+            if (Math.abs(mod_vel.y) < Math.abs(velocity.y)) {
+                velocity.y = mod_vel.y;
+            }
         }
+        
+        position.add(velocity.mul(timer.delta, new Vector3f()));
+    }
+
+    public static void setRenderer(Renderer renderer) {
+        Mob.renderer = renderer;
     }
 }

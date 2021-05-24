@@ -43,7 +43,7 @@ public class AABB { // axis aligned bounding box
         if (result.time >= 0 && result.time < 1) {
             return result;
         } else {
-            return new Collision(false, null, 0);
+            return new Collision(false, this);
         }
     }
 
@@ -59,7 +59,7 @@ public class AABB { // axis aligned bounding box
         t_far.mul(invdir);
 
         if (Float.isNaN(t_near.x) || Float.isNaN(t_near.y) || Float.isNaN(t_far.x) || Float.isNaN(t_far.y)) {
-            return new Collision(false, null, 0);
+            return new Collision(false, this);
         }
 
         if (t_near.x > t_far.x) {
@@ -75,35 +75,31 @@ public class AABB { // axis aligned bounding box
         }
 
         if (t_near.x > t_far.y || t_near.y > t_far.x) {
-            return new Collision(false, null, 0);
+            return new Collision(false, this);
         }
 
         float t_hit_near = Math.max(t_near.x, t_near.y);
         float t_hit_far = Math.min(t_far.x, t_far.y);
 
         if (t_hit_far < 0) {
-            return new Collision(false, null, 0);
+            return new Collision(false, this);
         }
 
         Vector3f normal = new Vector3f();
         if (t_near.x > t_near.y) {
             if (direction.x > 0) {
-                normal = new Vector3f(1, 0, 0);
+                normal = new Vector3f(1.01f, 0, 0);
             } else {
-                normal = new Vector3f(1, 0, 0);
+                normal = new Vector3f(1.01f, 0, 0);
             }
         } else if (t_near.x < t_near.y) {
             if (direction.y > 0) {
-                normal = new Vector3f(0, 1, 0);
+                normal = new Vector3f(0, 1.01f, 0);
             } else {
-                normal = new Vector3f(0, 1, 0);
+                normal = new Vector3f(0, 1.01f, 0);
             }
         }
-
-        // Vector3f contace_loc = new Vector3f();
-        // direction.mul(t_hit_near, contace_loc).add(origin);
-
-        return new Collision(true, normal, t_hit_near);
+        return new Collision(true, this, normal, t_hit_near);
     }
 
     // public boolean correctPosition(Collision collision) {

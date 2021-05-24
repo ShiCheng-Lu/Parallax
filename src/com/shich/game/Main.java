@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import com.shich.game.collision.AABB;
 import com.shich.game.collision.Collision;
 import com.shich.game.entities.Entity;
+import com.shich.game.entities.Mob;
 import com.shich.game.entities.Player;
 import com.shich.game.level.Block;
 import com.shich.game.level.Layer;
@@ -63,12 +64,14 @@ public class Main implements Runnable {
     public void run() {
         init();
         
-        AABB a = new AABB(0, 0, 1, 1);
-        Entity e = new Entity(a, "block/block-1.png");
-        Entity y = new Entity(a, "block/block-1.png");
-        Entity p = new Entity(new AABB(-1.0f, -1.0f, 1f, 1f), "block/block-1");
-        Entity v = new Entity(new AABB(0, 0, 1f, 1f), "block/block-1");
-        Entity z = new Entity(new AABB(0, 0, 0.1f, 0.1f), "block/block-1.png");
+        Mob.setRenderer(renderer);
+
+        // AABB a = new AABB(0, 0, 5, 5);
+        // Entity e = new Entity(a, "block/block-1.png");
+        // Entity y = new Entity(a, "block/block-1.png");
+        // Entity p = new Entity(new AABB(-1.0f, -1.0f, 1f, 1f), "block/block-1");
+        // Entity v = new Entity(new AABB(0, 0, 1f, 1f), "block/block-1");
+        // Entity z = new Entity(new AABB(0, 0, 0.1f, 0.1f), "block/block-1.png");
 
         while (!window.shouldClose()) {
             // if (input.isButtonDown(input.MOUSE_LEFT)) {
@@ -91,6 +94,9 @@ public class Main implements Runnable {
             // }
             // if (input.isButtonPressed(input.MOUSE_RIGHT)) {
             //     p.setPos(input.mouse_pos);
+            // }
+            // if (input.isKeyPressed(input.DASH)) {
+            //     p.setPos(v.getPos());
             // }
 
 
