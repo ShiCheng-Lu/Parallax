@@ -1,81 +1,123 @@
 package com.shich.game.entities;
 
+import java.util.ArrayList;
+
+import com.shich.game.collision.AABB;
+import com.shich.game.level.Layer;
 import com.shich.game.level.Level;
+import com.shich.game.render.Renderer;
+import com.shich.game.util.Timer;
+
+import org.joml.Vector3f;
 
 public class Mob extends Entity {
 
-    // movement
-    protected int xDir = 1;
-    protected double xVel, yVel;
-    protected double xVelMax, yVelMax;
-    public double xNew, yNew;
+    protected Vector3f velocity;
+    protected Vector3f accerlation;
+    protected Vector3f velocityMax;
 
-    protected int xAcc;
     // dash
     protected int dashTime, dashDist, dashCooldown;
     protected int dashTimer = 0, dashCooldownTimer = 0;
-    protected double dashSpeed;
+    protected float dashSpeed;
     // jump
     protected int jumpTime = 0, jumpTimer;
     protected boolean onGround = true, jumpHeld;
     protected int coyoteTime, coyoteTimer;
 
-    protected double maxHeight;
+    protected float maxHeight;
 
     // jumps
-    protected double jumpDist, jumpHeight, jumpVel;
-    protected double gravity;
+    protected float jumpDist, jumpHeight, jumpVel;
+    protected float gravity;
 
     protected Level level;
 
-    public Mob(double x, double y, double width, double height, Level level) {
-        super(x, y, width, height);
+    protected Vector3f old_pos;
+
+
+    public Mob(AABB bounds, Level level) {
+        super(bounds);
         this.level = level;
+
+        position = bounds.center;
+        velocity = new Vector3f();
+        accerlation = new Vector3f();
+
     }
+
+    public static Renderer renderer;
+
+    public void collideX(int i) {
+        Layer layer = level.getLayer(i);
+
+        for (int x = (int) (position.x / (i + 1)) - 2; x <= (int) (position.x / (i + 1)) + 2; ++x) {
+            for (int y = (int) (position.y / (i + 1)) - 2; y <= (int) (position.y / (i + 1)) + 2; ++y) {
+
+                byte type = layer.get(x, y);
+                if (type != (byte) 0) {
+                    AABB bounds = layer.getBoundingBox(x, y);
+
+                    if (bounds.getCollision(bounding_box)) {
+                        velocity.x = 0;
+                        if (old_pos.x / (i + 1) < x) {
+                            position.x = (float) Math.floor(position.x);
+                        } else {
+                            position.x = (float) Math.ceil(position.x);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void collideY(int i) {
+        Layer layer = level.getLayer(i);
+
+        for (int x = (int) (position.x / (i + 1)) - 2; x <= (int) (position.x / (i + 1)) + 2; ++x) {
+            for (int y = (int) (position.y / (i + 1)) - 2; y <= (int) (position.y / (i + 1)) + 2; ++y) {
+
+                byte type = layer.get(x, y);
+                if (type != (byte) 0) {
+                    AABB bounds = layer.getBoundingBox(x, y);
+
+                    if (bounds.getCollision(bounding_box)) {
+                        velocity.y = 0;
+                        if (old_pos.y / (i + 1) < y) {
+                            position.y = (float) Math.floor(position.y);
+                        } else {
+                            position.y = (float) Math.ceil(position.y);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void update(Timer timer) {
+
+        ArrayList<AABB> targets = new ArrayList<>();
+
+        velocity.mul(timer.delta);
+
+        for (int i = 0; i < level.layerNum; ++i) {
+            Vector3f mod_pos = position.div(i + 1, new Vector3f());
+            Layer layer = level.getLayer(i);
+
+            for (int x = (int) mod_pos.x - 2; x <= (int) mod_pos.x + 2; ++x) {
+                for (int y = (int) mod_pos.y - 2; y <= (int) mod_pos.y + 2; ++y) {
     
-    private void collisionUpdateX() {
-        if (level.checkCollide(this)) {
-            if (xDir == 1) {
-                xNew = Math.floor(xNew);
-                xVel = 0;
-            } else {
-                xNew = Math.ceil(xNew);
-                xVel = 0;
-            }
-        }
-    }
-
-    private void collisionUpdateY() {
-        if (level.checkCollide(this)) {
-            if (yVel > 0) {
-                yNew = Math.floor(yNew);
-                yVel = 0;
-            } else {
-                yNew = Math.ceil(yNew);
-                yVel = 0;
-                onGround = true;
-                coyoteTimer = coyoteTime;
+                    byte type = layer.get(x, y);
+                    if (type == (byte) 1 || (type == (byte) 2 && mod_pos.y >= y + 1)) {
+                        targets.add(layer.getBoundingBox(x, y));
+                    }
+                }
             }
         }
 
-        if (onGround == false && coyoteTimer > 0) {
-            coyoteTimer--;
-        }
-    }
-
-    public void update() {
-        double deltaTime = 1;
-
-        // simplified velocity verlet
-        xNew = x + xVel * xDir * deltaTime;
-        collisionUpdateX();
-        yNew = y + yVel * deltaTime - gravity * 0.5 * deltaTime * deltaTime;
-        collisionUpdateY();
-        // update to new coord
-        x = xNew;
-        y = yNew;
-        // update velocity
-        xVel = 0;
-        yVel -= gravity * deltaTime;
+        bounding_box.resolveCollision(velocity, targets);
+        
+        position.add(velocity);
+        velocity.div(timer.delta);
     }
 }

@@ -1,119 +1,129 @@
 package com.shich.game.entities;
 
+import com.shich.game.collision.AABB;
 import com.shich.game.level.Level;
-import com.shich.game.util.KeyHandler;
-import com.shich.game.util.MouseHandler;
+import com.shich.game.util.Input;
+import com.shich.game.util.Timer;
 
-import java.awt.Graphics;
-import java.awt.Color;
+import org.joml.Vector3f;
 
 public class Player extends Mob {
 
+    public Player(AABB bounds, Level level) {
+        super(bounds, level);
+        renderSetup("player.png");
 
-    public Player(String name, int x, int y, Level level) {
-        super(x, y, 1, 1, level);
-        loadImage("player.png");
-        setRenderSetting(32, -32, 0, 0);
-        //
-        xVelMax = 0.15;
-        yVelMax = 0.3;
+        velocityMax = new Vector3f(9, 18, 0);
+        accerlation = new Vector3f(2, 2, 0);
+        // //
+        // xVelMax = 0.15;
+        // yVelMax = 0.3;
 
-        dashCooldown = 30;
-        dashDist = 5;
-        dashTime = 10;
-        dashSpeed = (double) dashDist / dashTime;
+        // dashCooldown = 30;
+        // dashDist = 5;
+        // dashTime = 10;
+        // dashSpeed = (double) dashDist / dashTime;
 
         jumpDist = 7;
         jumpHeight = 5;
         // coyoteTime = 3;
 
-        gravity = (8 * jumpHeight * xVelMax * xVelMax) / (jumpDist * jumpDist);
-        jumpVel = (4 * jumpHeight * xVelMax) / jumpDist + (gravity * 0.1); // additional tolerance
+        gravity = (8 * jumpHeight * velocityMax.x * velocityMax.x) / (jumpDist * jumpDist);
+        jumpVel = jumpHeight *4 * velocityMax.x / jumpDist;
+        
+        // additional tolerance
     }
 
-    private void dash() {
-        dashTimer = dashTime;
-        dashCooldownTimer = dashCooldown;
-        xVel = dashSpeed;
+    // private void dash() {
+    // dashTimer = dashTime;
+    // dashCooldownTimer = dashCooldown;
+    // xVel = dashSpeed;
+    // }
+
+    // private void jump() {
+    // yVel = jumpVel;
+    // onGround = false;
+    // jumpHeld = true;
+    // }
+
+    // private boolean dashUpdate() {
+    // if (dashCooldownTimer > 0) {
+    // dashCooldownTimer--;
+    // }
+    // if (dashTimer > 0) {
+    // // in dash
+    // velocity.set(dashSpeed, 0);
+    // dashTimer--;
+    // return true;
+    // } else {
+    // // normal movement
+    // return false;
+    // }
+    // }
+
+    // public void drawHUD(Graphics g) {
+    // g.setColor(Color.BLACK);
+    // g.drawString(String.format("x: %.2f, y: %.2f", getX(), getY()), 1000, 20);
+    // }
+
+    public void input(Input input) {
+        if (input.isKeyDown(input.LEFT)) {
+            velocity.x = Math.max(velocity.x - accerlation.x, -velocityMax.x);
+        }
+        if (input.isKeyDown(input.RIGHT)) {
+            velocity.x = Math.min(velocity.x + accerlation.x, velocityMax.x);
+        }
+        if (input.isKeyPressed(input.UP)) {
+            velocity.y = jumpVel;
+        }
+        if (input.isKeyDown(input.DOWN)) {
+            velocity.y = Math.max(velocity.y - accerlation.y, -velocityMax.x);
+        }
+        // if (dashTimer == 0) {
+        // if (input.isKeyDown(GLFW_KEY_W)) {
+        // velocity.x += accerlation.x;
+        // }
+        // if (key.right.pressed()) {
+        // velocity.x += accerlation.x;
+        // }
+        // }
+
+        // if (key.dash.clicked() && dashCooldownTimer == 0) {
+        // dash();
+        // }
+
+        // if (key.jump.clicked()) {
+        // if (onGround || coyoteTimer > 0) {
+        // jump();
+        // }
+        // }a
+        // if (key.jump.pressed() && jumpHeld) {
+        // // extend jump
+        // } else {
+        // jumpHeld = false;
+        // }
+        if (input.isButtonPressed(input.MOUSE_RIGHT)) {
+            System.out.println(position);
+        }
+
     }
 
-    private void jump() {
-        yVel = jumpVel;
-        onGround = false;
-        jumpHeld = true;
-    }
+    
 
-    public void input(KeyHandler key, MouseHandler mouse) {
-        if (dashTimer == 0) {
-            if (key.left.pressed()) {
-                xDir = -1;
-                xVel = xVelMax;
-            }
-            if (key.right.pressed()) {
-                xDir = 1;
-                xVel = xVelMax;
-            }
-        }
-
-        if (key.dash.clicked() && dashCooldownTimer == 0) {
-            dash();
-        }
-
-        if (key.jump.clicked()) {
-            if (onGround || coyoteTimer > 0) {
-                jump();
-            }
-        }
-        if (key.jump.pressed() && jumpHeld) {
-            // extend jump
+    public void update(Timer timer) {
+        
+        super.update(timer);
+        
+        if (position.y < 0) {
+            velocity.y = 0;
+            position.y = 0;
         } else {
-            jumpHeld = false;
+            velocity.y -= gravity * timer.delta;
         }
+        velocity.x *= 0.8f;
     }
 
-    private boolean dashUpdate() {
-        if (dashCooldownTimer > 0) {
-            dashCooldownTimer--;
-        }
-        if (dashTimer > 0) {
-            // in dash
-            xVel = dashSpeed;
-            yVel = 0;
-            dashTimer--;
-            return true;
-        } else {
-            // normal movement
-            return false;
-        }
-    }
-
-    @Override
-    public void update() { 
-        // handles jump
-        if (yVel > 0 && !jumpHeld) {
-            yVel -= 2 * gravity;
-        }
-        if (yVel < 0) {
-            onGround = false;
-        }
-        // dashupdate must be after jump handling to kill vertical velocity
-        dashUpdate();
-
-        super.update();
-    }
-
-    public void drawHUD(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.drawString(String.format("x: %.2f, y: %.2f", x, y), 1000, 20);
-    }
-
-    public void render(Graphics g) {
-        super.render(g);
-        g.drawRect(640, 480, 32, 32);
-    }
-
-    public void setPos(double x, double y) {
-        this.x = x;
-        this.y = y;
+    public void setLevel(Level level) {
+        this.level = level;
     }
 }
