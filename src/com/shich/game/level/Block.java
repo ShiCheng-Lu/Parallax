@@ -12,8 +12,6 @@ public class Block extends Entity {
 
     private static Hashtable<Byte, Block>block_set = new Hashtable<Byte, Block>();
     private byte id;
-    
-    public char type;
 
     public Block(Byte id, String texture_file) {
         super(new AABB(0, 0, 1, 1), texture_file);
@@ -21,8 +19,8 @@ public class Block extends Entity {
         block_set.put(id, this);
     }
 
-    public char getType() {
-        return type;
+    public byte getType() {
+        return id;
     }
 
     public static void render(Renderer renderer, byte id, Vector3f offset) {

@@ -26,7 +26,7 @@ public class Model {
 
         ibo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, this.indices, GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 

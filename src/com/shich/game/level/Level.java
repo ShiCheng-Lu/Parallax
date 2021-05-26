@@ -1,6 +1,5 @@
 package com.shich.game.level;
 
-import java.awt.Graphics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -10,13 +9,9 @@ import java.util.Scanner;
 
 import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
-import com.shich.game.entities.Mob;
 import com.shich.game.entities.Player;
 import com.shich.game.render.Renderer;
-import com.shich.game.states.GameState;
-import com.shich.game.states.PlayState;
 
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Level {
@@ -32,9 +27,14 @@ public class Level {
     }
 
     public void render(Renderer renderer, Player player) {
+        for (int i = 1; i < layerNum; ++i) {
+            layers.get(i).renderAsset(renderer, player.getPos().mul(i/(i + 1.0f), new Vector3f()));
+        }
         for (int i = layerNum - 1; i >= 0; --i) {
             layers.get(i).render(renderer, player.getPos().mul(i/(i + 1.0f), new Vector3f()));
         }
+        player.render(renderer);
+        layers.get(0).renderAsset(renderer, new Vector3f());
     }
 
     public Layer getLayer(int i) {
@@ -123,12 +123,9 @@ public class Level {
                 layerNum++;
             }
             
-            // int[] startloc = {-576, -384, -192, 0, 192, 384, 576, 768, 960, 1152};
-            // for (int x : startloc) {
-            //     layers.get(0).addAsset(x, 32, "assets/grass03.png");
-            // }
-            
-            // layers.get(1).addAsset(-768, -128, 2304, 226, "assets/l2.png");
+            // layers.get(0).addAsset(new Entity(new AABB(0, -2, 50, 3), "assets/grass03.png"));
+            // layers.get(0).addAsset(new Entity(new AABB(0, -0.3f, 50, 0.5f), "assets/set_grass1.png"));
+            // layers.get(2).addAsset(new Entity(new AABB(0, 2, 70, 10), "assets/l2.png"));
 
             fileReader.close();
             this.name = name;

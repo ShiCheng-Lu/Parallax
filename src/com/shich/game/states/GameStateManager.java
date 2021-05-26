@@ -2,7 +2,6 @@ package com.shich.game.states;
 
 import java.util.ArrayList;
 
-import com.shich.game.entities.Player;
 import com.shich.game.render.Renderer;
 import com.shich.game.util.Camera;
 import com.shich.game.util.Input;

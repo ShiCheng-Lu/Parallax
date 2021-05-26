@@ -1,9 +1,7 @@
 package com.shich.game.states;
 
-import java.awt.Graphics;
-
 import com.shich.game.collision.AABB;
-import com.shich.game.entities.*;
+import com.shich.game.entities.Player;
 import com.shich.game.level.Level;
 import com.shich.game.render.Renderer;
 import com.shich.game.util.Input;
@@ -61,7 +59,6 @@ public class PlayState extends GameState {
 
     @Override
     public void render(Renderer renderer) {
-        player.render(renderer);
         level.render(renderer, player);
     }
 }

@@ -1,14 +1,12 @@
 package com.shich.game.entities;
 
-import javax.swing.ImageIcon;
-
 import com.shich.game.collision.AABB;
-import com.shich.game.level.*;
-import com.shich.game.render.*;
+import com.shich.game.render.Model;
+import com.shich.game.render.Renderer;
+import com.shich.game.render.Texture;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class Entity {

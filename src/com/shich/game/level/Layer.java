@@ -6,7 +6,6 @@ import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
 import com.shich.game.render.Renderer;
 
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Layer {
@@ -51,10 +50,14 @@ public class Layer {
                 }
             }
         }
+    }
 
-        // for (Entity e : assets) {
-        //     e.render(renderer);
-        // }
+    public void renderAsset(Renderer renderer, Vector3f offset) {
+        for (Entity e : assets) {
+            e.getPos().add(offset);
+            e.render(renderer);
+            e.getPos().sub(offset);
+        }
     }
 
     public AABB getBoundingBox(int x, int y) {
@@ -62,5 +65,9 @@ public class Layer {
             return bounds[x][y];
         }
         return null;
+    }
+
+    public void addAsset(Entity e) {
+        assets.add(e);
     }
 }

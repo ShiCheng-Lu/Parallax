@@ -1,10 +1,21 @@
 package com.shich.game.render;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+
 import com.shich.game.util.Camera;
 
-import static org.lwjgl.opengl.GL30.*;
-
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Renderer {

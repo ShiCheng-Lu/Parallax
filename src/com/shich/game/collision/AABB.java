@@ -1,6 +1,7 @@
 package com.shich.game.collision;
 
-import org.joml.Vector2f;
+import java.util.ArrayList;
+
 import org.joml.Vector3f;
 
 public class AABB { // axis aligned bounding box
@@ -43,11 +44,16 @@ public class AABB { // axis aligned bounding box
         if (result.time >= 0 && result.time < 1) {
             return result;
         } else {
-            return new Collision(false, this);
+            Vector3f distance = new Vector3f(other.center).sub(center);
+            distance.absolute().sub(half_extent).sub(other.half_extent);
+            return new Collision(false, this, distance);
         }
     }
 
     public Collision rayCollision(Vector3f origin, Vector3f direction) {
+        Vector3f distance = new Vector3f(origin).sub(center);
+        distance.absolute();
+
         Vector3f invdir = new Vector3f(1, 1, 1).div(direction);
 
         Vector3f t_near = new Vector3f();
@@ -59,7 +65,7 @@ public class AABB { // axis aligned bounding box
         t_far.mul(invdir);
 
         if (Float.isNaN(t_near.x) || Float.isNaN(t_near.y) || Float.isNaN(t_far.x) || Float.isNaN(t_far.y)) {
-            return new Collision(false, this);
+            return new Collision(false, this, distance);
         }
 
         if (t_near.x > t_far.x) {
@@ -74,32 +80,43 @@ public class AABB { // axis aligned bounding box
             t_far.y = temp;
         }
 
-        if (t_near.x > t_far.y || t_near.y > t_far.x) {
-            return new Collision(false, this);
+        if (t_near.x >= t_far.y || t_near.y >= t_far.x) {
+            return new Collision(false, this, distance);
         }
 
         float t_hit_near = Math.max(t_near.x, t_near.y);
         float t_hit_far = Math.min(t_far.x, t_far.y);
 
         if (t_hit_far < 0) {
-            return new Collision(false, this);
+            return new Collision(false, this, distance);
         }
 
-        Vector3f normal = new Vector3f();
+        Vector3f cancel_dir = new Vector3f(1, 1, 1);
         if (t_near.x > t_near.y) {
-            if (direction.x > 0) {
-                normal = new Vector3f(1.01f, 0, 0);
-            } else {
-                normal = new Vector3f(1.01f, 0, 0);
-            }
+            cancel_dir = new Vector3f(1, 0, 0);
         } else if (t_near.x < t_near.y) {
-            if (direction.y > 0) {
-                normal = new Vector3f(0, 1.01f, 0);
-            } else {
-                normal = new Vector3f(0, 1.01f, 0);
+            cancel_dir = new Vector3f(0, 1, 0);
+        }
+        return new Collision(true, this, cancel_dir, t_hit_near, distance);
+    }
+
+    public void resolveCollision(Vector3f vel, ArrayList<AABB> targets) {
+        
+        ArrayList<Collision> collisions = new ArrayList<>();
+
+        for (AABB target : targets) {
+            collisions.add(target.getCollision(this, vel));
+        }
+
+        collisions.sort(null);
+        for (Collision c : collisions) {
+            // collide and update velocity
+            Collision new_c = c.target.getCollision(this, vel);
+            if (new_c.intersects) {
+                vel.sub(new_c.normal.mul(vel).mul(1 - new_c.time));
             }
         }
-        return new Collision(true, this, normal, t_hit_near);
+
     }
 
     // public boolean correctPosition(Collision collision) {

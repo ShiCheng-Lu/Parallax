@@ -24,4 +24,8 @@ public class Timer {
         return (float) nano_sec / 1000000000;
     }
 
+    public float getTargetTime() {
+        return targetDelta;
+    }
+
 }

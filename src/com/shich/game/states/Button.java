@@ -1,13 +1,9 @@
 package com.shich.game.states;
 
-import java.util.function.Function;
-
 import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
 import com.shich.game.render.Renderer;
 import com.shich.game.util.Input;
-
-import org.joml.Vector3f;
 
 public class Button extends Entity {
 
@@ -50,7 +46,12 @@ public class Button extends Entity {
 
     public void render(Renderer renderer) {
         super.render(renderer);
+        if (hovered) {
+            renderHovered(renderer);
+        }
     }
+
+    public void renderHovered(Renderer renderer) {}
 
     public void pressed() {}
 

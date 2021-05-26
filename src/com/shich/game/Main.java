@@ -1,24 +1,17 @@
 package com.shich.game;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwInit;
 
-import com.shich.game.collision.AABB;
-import com.shich.game.collision.Collision;
-import com.shich.game.entities.Entity;
 import com.shich.game.entities.Mob;
-import com.shich.game.entities.Player;
 import com.shich.game.level.Block;
-import com.shich.game.level.Layer;
-import com.shich.game.level.Level;
-import com.shich.game.render.Model;
 import com.shich.game.render.Renderer;
 import com.shich.game.render.Shader;
-import com.shich.game.render.Texture;
 import com.shich.game.states.GameStateManager;
-import com.shich.game.util.*;
+import com.shich.game.util.Camera;
+import com.shich.game.util.Input;
+import com.shich.game.util.Timer;
+import com.shich.game.util.Window;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 public class Main implements Runnable {
@@ -33,7 +26,6 @@ public class Main implements Runnable {
     private GameStateManager gsm;
 
     // temps
-    private Player player;
 
     public void start() {
         game = new Thread(this, "game thread");
@@ -63,8 +55,6 @@ public class Main implements Runnable {
     @Override
     public void run() {
         init();
-        
-        Mob.setRenderer(renderer);
 
         // AABB a = new AABB(0, 0, 5, 5);
         // Entity e = new Entity(a, "block/block-1.png");
@@ -72,6 +62,7 @@ public class Main implements Runnable {
         // Entity p = new Entity(new AABB(-1.0f, -1.0f, 1f, 1f), "block/block-1");
         // Entity v = new Entity(new AABB(0, 0, 1f, 1f), "block/block-1");
         // Entity z = new Entity(new AABB(0, 0, 0.1f, 0.1f), "block/block-1.png");
+        Mob.renderer = renderer;
 
         while (!window.shouldClose()) {
             // if (input.isButtonDown(input.MOUSE_LEFT)) {

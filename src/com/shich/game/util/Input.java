@@ -1,11 +1,28 @@
 package com.shich.game.util;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_K;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_L;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LAST;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_1;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_2;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_3;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LAST;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
+import static org.lwjgl.glfw.GLFW.glfwGetKey;
+import static org.lwjgl.glfw.GLFW.glfwGetMouseButton;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;

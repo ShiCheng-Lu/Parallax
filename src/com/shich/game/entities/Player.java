@@ -1,8 +1,6 @@
 package com.shich.game.entities;
 
 import com.shich.game.collision.AABB;
-import com.shich.game.collision.Collision;
-import com.shich.game.level.Layer;
 import com.shich.game.level.Level;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
@@ -15,7 +13,7 @@ public class Player extends Mob {
         super(bounds, level);
         renderSetup("player.png");
 
-        velocityMax = new Vector3f(10, 10, 0);
+        velocityMax = new Vector3f(9, 18, 0);
         accerlation = new Vector3f(2, 2, 0);
         // //
         // xVelMax = 0.15;
@@ -26,12 +24,13 @@ public class Player extends Mob {
         // dashTime = 10;
         // dashSpeed = (double) dashDist / dashTime;
 
-        // jumpDist = 7;
-        // jumpHeight = 5;
-        // // coyoteTime = 3;
+        jumpDist = 7;
+        jumpHeight = 5;
+        // coyoteTime = 3;
 
-        // gravity = (8 * jumpHeight * xVelMax * xVelMax) / (jumpDist * jumpDist);
-        // jumpVel = (4 * jumpHeight * xVelMax) / jumpDist + (gravity * 0.1); //
+        gravity = (8 * jumpHeight * velocityMax.x * velocityMax.x) / (jumpDist * jumpDist);
+        jumpVel = jumpHeight *4 * velocityMax.x / jumpDist;
+        
         // additional tolerance
     }
 
@@ -74,8 +73,8 @@ public class Player extends Mob {
         if (input.isKeyDown(input.RIGHT)) {
             velocity.x = Math.min(velocity.x + accerlation.x, velocityMax.x);
         }
-        if (input.isKeyDown(input.UP)) {
-            velocity.y = Math.min(velocity.y + accerlation.y, velocityMax.y);
+        if (input.isKeyPressed(input.UP)) {
+            velocity.y = jumpVel;
         }
         if (input.isKeyDown(input.DOWN)) {
             velocity.y = Math.max(velocity.y - accerlation.y, -velocityMax.x);
@@ -119,9 +118,9 @@ public class Player extends Mob {
             velocity.y = 0;
             position.y = 0;
         } else {
-            velocity.y -= 0.2;
+            velocity.y -= gravity * timer.delta;
         }
-        velocity.mul(0.8f);
+        velocity.x *= 0.8f;
     }
 
     public void setLevel(Level level) {

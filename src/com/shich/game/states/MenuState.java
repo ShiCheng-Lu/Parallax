@@ -5,8 +5,6 @@ import com.shich.game.render.Renderer;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 
-import org.joml.Vector3f;
-
 public class MenuState extends GameState {
 
     Button title;
@@ -23,7 +21,7 @@ public class MenuState extends GameState {
             @Override
             public void released() {
                 PlayState ps = new PlayState(gsm);
-                ps.loadLevel("level-4");
+                ps.loadLevel("level-3");
                 gsm.addState(ps);
             }
         };
