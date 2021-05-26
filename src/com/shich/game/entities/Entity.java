@@ -1,63 +1,81 @@
 package com.shich.game.entities;
 
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.util.ArrayList;
+import com.shich.game.collision.AABB;
+import com.shich.game.render.Model;
+import com.shich.game.render.Renderer;
+import com.shich.game.render.Texture;
+import com.shich.game.util.Input;
+import com.shich.game.util.Timer;
 
-import javax.swing.ImageIcon;
-import java.awt.Graphics;
+import org.joml.Vector3f;
 
 public class Entity {
 
-    protected static ArrayList<Entity> allEntities = new ArrayList<Entity>();
+    public AABB bounding_box;
+    protected Vector3f position;
 
-    public double x, y, width, height;
-    protected Image img;
-    public int xScale = 1, yScale = 1, xOffset = 0, yOffset = 0;
+    protected Model model;
+    protected Texture texture;
 
-    public Entity(double x, double y, double width, double height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+    public Entity(AABB bounds) {
+        bounding_box = bounds;
+        position = bounds.center;
     }
 
-    public Entity(double x, double y) {
-        this(x, y, 0, 0);
+    public Entity(AABB bounds, String texture_file) {
+        this(bounds);
+        renderSetup(texture_file);
     }
 
-    public void loadImage(String file) {
-        ImageIcon ii = new ImageIcon("graphics/" + file);
-        img = ii.getImage();
+    public void renderSetup(String texture_file) {
+        float width = bounding_box.half_extent.x;
+        float height = bounding_box.half_extent.y;
+
+        float[] vertices = new float[] { 
+            -width, height, 0, 
+            width, height, 0,
+            width, -height, 0,
+            -width, -height, 0, };
+
+        float[] texCoords = new float[] { 0, 0, 1, 0, 1, 1, 0, 1, };
+
+        int[] indices = new int[] { 0, 1, 2, 2, 3, 0, };
+
+        this.model = new Model(vertices, texCoords, indices);
+        this.texture = new Texture(texture_file);
     }
 
-    public void update() {
+    public void input(Input input) {
     }
 
-    public void render(Graphics g, int xScale, int yScale, int xOffset, int yOffset) {
-        g.drawImage(img, toInt(x * xScale) + xOffset, toInt(y * yScale) + yOffset, (int) width, (int) height, null);
+    public void update(Timer timer) {
     }
 
-    public void render(Graphics g, int xOffset, int yOffset) {
-        render(g, xScale, yScale, xOffset, yOffset); // use entity default scale
+    public void render(Renderer renderer) {
+        renderer.render(model, position, texture);
     }
 
-    public void render(Graphics g) {
-        render(g, xScale, yScale, xOffset, yOffset); // use entity default scale and offset
+    public float getX() {
+        return bounding_box.center.x;
     }
 
-    public void setRenderSetting(int xScale, int yScale, int xOffset, int yOffset) {
-        this.xScale = xScale;
-        this.yScale = yScale;
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
+    public float getY() {
+        return bounding_box.center.y;
     }
 
-    public int toInt(double num) {
-        return (int) Math.round(num);
+    public void setPos(float x, float y, float z) {
+        position.set(x, y, z);
     }
 
-    public Rectangle getBounds() {
-        return new Rectangle(toInt(x - width / 2), toInt(y - height / 2), toInt(width), toInt(height));
+    public Vector3f getPos() {
+        return position;
+    }
+
+    public void setPos2D(float x, float y) {
+        bounding_box.center.set(x, y, 0);
+    }
+
+    public void setPos(Vector3f direction) {
+        position.set(direction);
     }
 }

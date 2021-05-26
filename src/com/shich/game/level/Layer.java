@@ -1,107 +1,73 @@
 package com.shich.game.level;
 
-import java.awt.Graphics;
 import java.util.ArrayList;
 
+import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
-import com.shich.game.entities.Mob;
+import com.shich.game.render.Renderer;
+
+import org.joml.Vector3f;
 
 public class Layer {
     protected Level level;
-    public int width, height, movementMod;
-    protected Block[][] tiles;
+    public int width, height;
+    protected byte[][] tiles;
+    protected AABB[][] bounds;
+
+    public int scale;
 
     protected ArrayList<Entity> assets = new ArrayList<Entity>();
 
-    public Layer(Level level, int width, int height, int movementMod) {
+    public Layer(Level level, int width, int height, int scale) {
         this.level = level;
         this.width = width;
         this.height = height;
-        this.movementMod = movementMod;
+        this.scale = scale;
 
-        tiles = new Block[width][height];
-        for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-                tiles[x][y] = new Block(x, y, Block.AIR);
-            }
-        }
+        tiles = new byte[width][height];
+        bounds = new AABB[width][height];
     }
 
-    public void set(int x, int y, char type) {
+    public void set(int x, int y, byte type) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            tiles[x][y].setType(type);
+            tiles[x][y] = type;
+            bounds[x][y] = new AABB(x * scale, y * scale, scale * 2 - 1, scale * 2 - 1);
         }
     }
 
-    // remove not used
-    // public void remove(int x, int y) {
-    //     if (x >= 0 && x < width && y >= 0 && y < height) {
-    //         tiles[x][y] = null;
-    //     }
-    // }
-
-    public Block get(int x, int y) {
+    public byte get(int x, int y) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
             return tiles[x][y];
         }
-        return new Block(0, 0, Block.AIR);
+        return 0;
     }
 
-    public void render(Graphics g, int xOffset, int yOffset) {
+    public void render(Renderer renderer, Vector3f offset) {
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                if (tiles[x][y] != null) {
-                    tiles[x][y].render(g, xOffset, yOffset);
+                if (tiles[x][y] != 0) {
+                    Block.render(renderer, tiles[x][y], offset.add(x, y, 0, new Vector3f()));
                 }
             }
         }
-
-        for (Entity e : assets) {
-            e.render(g, xOffset, yOffset);
-        }
-        // g.drawRect(camX, camY - (height - 1) * 32, width * 32, height * 32);
     }
 
-    public Block collision(int x, int y) {
-        if (0 <= x && x < width && 0 <= y && y < height) {
-            return tiles[x][y];
+    public void renderAsset(Renderer renderer, Vector3f offset) {
+        for (Entity e : assets) {
+            e.getPos().add(offset);
+            e.render(renderer);
+            e.getPos().sub(offset);
+        }
+    }
+
+    public AABB getBoundingBox(int x, int y) {
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+            return bounds[x][y];
         }
         return null;
     }
 
-    public boolean checkCollide(Mob m) {
-        double xNew = m.xNew / movementMod;
-        double yNew = m.yNew / movementMod;
-        // double x = m.x / movementMod;
-        double y = m.y / movementMod;
-
-        for (int tx = (int) Math.floor(xNew); tx < (int) Math.ceil(xNew + m.width); ++tx) {
-            for (int ty = (int) Math.floor(yNew); ty < (int) Math.ceil(yNew + m.height); ++ty) {
-                switch (collision(tx, ty).getType()) {
-                    case Block.SOLID:
-                        return true;
-                    case Block.SEMISOLID:
-                        if (y >= ty + 1) { // if the player starting position is above the block
-                            return true;
-                        }
-                        break;
-                    case Block.AIR:
-                        break;
-                    case Block.WIN:
-                        level.loadNext();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void addAsset(double x, double y, String file) {
-        Entity e = new Entity(x, y);
-        e.setRenderSetting(1, 1, 0, 0);
-        e.loadImage(file);
+    public void addAsset(Entity e) {
         assets.add(e);
     }
 }

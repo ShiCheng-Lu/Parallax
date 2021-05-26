@@ -1,10 +1,9 @@
 package com.shich.game.states;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
-
-import com.shich.game.util.KeyHandler;
-import com.shich.game.util.MouseHandler;
+import com.shich.game.collision.AABB;
+import com.shich.game.render.Renderer;
+import com.shich.game.util.Input;
+import com.shich.game.util.Timer;
 
 public class MenuState extends GameState {
 
@@ -16,40 +15,39 @@ public class MenuState extends GameState {
     public MenuState(GameStateManager gsm) {
         super(gsm);
         
-        title = new Button(new Rectangle(268, 100, 1000, 300));
-        title.loadImage("menu/title.png");
+        title = new Button(new AABB(0, 5, 25, 7), "menu/title.png");
 
-        enterPlayState = new Button(new Rectangle(518, 450, 500, 100));
-        enterPlayState.loadImage("menu/playButton.png");
+        enterPlayState = new Button(new AABB(0, -1, 12, 3), "menu/playButton.png") {
+            @Override
+            public void released() {
+                PlayState ps = new PlayState(gsm);
+                ps.loadLevel("level-3");
+                gsm.addState(ps);
+            }
+        };
 
-        enterCreateState = new Button(new Rectangle(518, 550, 500, 100));
-        enterCreateState.loadImage("menu/levelEditorButton.png");
+        enterCreateState = new Button(new AABB(0, -4, 12, 3), "menu/levelEditorButton.png") {
+            @Override
+            public void released() {
+                // gsm.addState(new CreateState(gsm));
+            }
+        };
     }
 
     @Override
-    public void input(KeyHandler key, MouseHandler mouse) {
-        enterPlayState.input(key, mouse);
-        enterCreateState.input(key, mouse);
+    public void input(Input input) {
+        enterPlayState.input(input);
+        enterCreateState.input(input);
     }
 
     @Override
-    public void update() {
-        if (enterPlayState.clicked()) {
-            gsm.remove(0);
-            PlayState ps = new PlayState(gsm);
-            ps.loadLevel("selector");
-            gsm.addState(ps);
-        }
-        if (enterCreateState.clicked()) {
-            gsm.remove(0);
-            gsm.addState(new CreateState(gsm));
-        }
+    public void update(Timer timer) {
     }
 
     @Override
-    public void render(Graphics g) {
-        title.render(g, false);
-        enterPlayState.render(g, true);
-        enterCreateState.render(g, true);
+    public void render(Renderer renderer) {
+        title.render(renderer);
+        enterPlayState.render(renderer);
+        enterCreateState.render(renderer);
     }
 }

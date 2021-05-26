@@ -1,6 +1,5 @@
 package com.shich.game.level;
 
-import java.awt.Graphics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -8,67 +7,57 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
-import com.shich.game.entities.Mob;
-import com.shich.game.states.GameState;
-import com.shich.game.states.PlayState;
+import com.shich.game.entities.Player;
+import com.shich.game.render.Renderer;
+
+import org.joml.Vector3f;
 
 public class Level {
-    public GameState parent;
     public String name;
     public int layerNum;
     public ArrayList<Layer> layers;
 
     protected ArrayList<Entity> assets = new ArrayList<Entity>();
 
-    public Level(GameState parent) {
-        this.parent = parent;
+    public Level() {
         layerNum = 0;
         layers = new ArrayList<Layer>();
     }
 
-    public void render(Graphics g, double pX, double pY) {
+    public void render(Renderer renderer, Player player) {
+        for (int i = 1; i < layerNum; ++i) {
+            layers.get(i).renderAsset(renderer, player.getPos().mul(i/(i + 1.0f), new Vector3f()));
+        }
         for (int i = layerNum - 1; i >= 0; --i) {
-            int xOffset = (int) Math.round(pX * 32 * i / (i + 1));
-            int yOffset = (int) Math.round(pY * 32 * i / (i + 1));
-            layers.get(i).render(g, xOffset, -yOffset);
+            layers.get(i).render(renderer, player.getPos().mul(i/(i + 1.0f), new Vector3f()));
         }
+        player.render(renderer);
+        layers.get(0).renderAsset(renderer, new Vector3f());
     }
 
-    public boolean checkCollide(Mob m) {
-        // level boundary check
-        if (m.xNew < 0 || m.xNew > 24 || m.yNew < 0 || m.yNew > 24) {
-            return true;
-        }
-        // layer collide check
-        for (Layer layer : layers) {
-            if (layer.checkCollide(m)) {
-                return true;
-            }
-        }
-        return false;
+    public Layer getLayer(int i) {
+        return layers.get(i);
     }
 
-    public void set(int layer, int x, int y, char type) {
+    public void set(int layer, int x, int y, byte type) {
         layers.get(layer).set(x, y, type);
     }
 
     public void remove(int layer, int x, int y) {
         if (layer >= 0 && layer < layerNum) {
-            layers.get(layer).set(x, y, Block.AIR);
+            layers.get(layer).set(x, y, (byte) 0);
         }
     }
 
     public void loadNext() {
-        if (parent instanceof PlayState) {
-            PlayState p = (PlayState) parent;
-            p.player.xNew = 0;
-            p.player.yNew = 0;
-            p.player.x = 0;
-            p.player.y = 0;
-            int newlevel = Integer.parseInt(name.split("-")[1]) + 1;
-            load("level-" + newlevel);
-        }
+        // if (parent instanceof PlayState) {
+        //     PlayState p = (PlayState) parent;
+        //     p.player.setPos(0, 0);
+        //     int newlevel = Integer.parseInt(name.split("-")[1]) + 1;
+        //     load("level-" + newlevel);
+        // }
     }
 
     public void save(String name) {
@@ -85,11 +74,11 @@ public class Level {
                 // encode layer definitions
                 output += layer.width + " ";
                 output += layer.height + " ";
-                output += layer.movementMod + " ";
+                output += layer.scale + " ";
                 // encode layer datad
                 for (int x = 0; x < layer.width; ++x) {
                     for (int y = 0; y < layer.height; ++y) {
-                        output += layer.get(x, y).type;
+                        output += layer.get(x, y);
                     }
                 }
                 output += '\n';
@@ -109,7 +98,7 @@ public class Level {
             layerNum = 0;
             layers = new ArrayList<Layer>();
 
-            String filePath = "levels/" + name + ".txt";
+            String filePath = "res/levels/" + name + ".txt";
             File file = new File(filePath);
             Scanner fileReader = new Scanner(file);
 
@@ -118,12 +107,15 @@ public class Level {
                 int height = fileReader.nextInt();
                 int movementMod = fileReader.nextInt();
                 String data = fileReader.nextLine().strip();
+                
                 Layer layer = new Layer(this, width, height, movementMod);
 
                 int index = 0;
                 for (int x = 0; x < width; ++x) {
                     for (int y = 0; y < height; ++y) {
-                        layer.set(x, y, data.charAt(index));
+                        byte blockType = (byte) (data.charAt(index) - '0');
+                        layer.set(x, y, blockType);
+
                         index++;
                     }
                 }
@@ -131,8 +123,9 @@ public class Level {
                 layerNum++;
             }
             
-            layers.get(0).addAsset(-768, 0, "assets/grass.png");
-            layers.get(1).addAsset(-768, -128, "assets/l2.png");
+            // layers.get(0).addAsset(new Entity(new AABB(0, -2, 50, 3), "assets/grass03.png"));
+            // layers.get(0).addAsset(new Entity(new AABB(0, -0.3f, 50, 0.5f), "assets/set_grass1.png"));
+            // layers.get(2).addAsset(new Entity(new AABB(0, 2, 70, 10), "assets/l2.png"));
 
             fileReader.close();
             this.name = name;
