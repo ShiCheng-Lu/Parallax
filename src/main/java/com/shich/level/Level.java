@@ -9,7 +9,9 @@ import java.util.Scanner;
 
 import com.shich.entities.Entity;
 import com.shich.entities.Player;
+import com.shich.entities.bounds.AABB;
 import com.shich.entities.render.Renderer;
+import com.shich.util.Files;
 
 import org.joml.Vector3f;
 
@@ -17,6 +19,8 @@ public class Level {
     public String name;
     public int layerNum;
     public ArrayList<Layer> layers;
+
+    public AABB win_bounds;
 
     protected ArrayList<Entity> assets = new ArrayList<Entity>();
 
@@ -60,78 +64,27 @@ public class Level {
     }
 
     public void save(String name) {
-        try {
-            String filePath = "src/com/shich/game/level/levels/" + name + ".txt";
-            File file = new File(filePath);
-            file.createNewFile();
-
-            FileWriter fileWriter = new FileWriter(filePath);
-
-            String output = "";
-
+            StringBuilder result = new StringBuilder();
             for (Layer layer : layers) {
-                // encode layer definitions
-                output += layer.width + " ";
-                output += layer.height + " ";
-                output += layer.scale + " ";
-                // encode layer datad
-                for (int x = 0; x < layer.width; ++x) {
-                    for (int y = 0; y < layer.height; ++y) {
-                        output += layer.get(x, y);
-                    }
-                }
-                output += '\n';
+                result.append(layer.save());
+                result.append("\n");
             }
-
-            fileWriter.write(output);
-            fileWriter.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+            Files.writeFile("levels/" + name, result.toString());
     }
 
     public void load(String name) {
-        try {
-            layerNum = 0;
-            layers = new ArrayList<Layer>();
+        String[] level_data = Files.readFile("levels/" + name).split("\n");
 
-            String filePath = "res/levels/" + name + ".txt";
-            File file = new File(filePath);
-            Scanner fileReader = new Scanner(file);
-
-            while (fileReader.hasNextLine()) {
-                int width = fileReader.nextInt();
-                int height = fileReader.nextInt();
-                int movementMod = fileReader.nextInt();
-                String data = fileReader.nextLine().strip();
-                
-                Layer layer = new Layer(this, width, height, movementMod);
-
-                int index = 0;
-                for (int x = 0; x < width; ++x) {
-                    for (int y = 0; y < height; ++y) {
-                        byte blockType = (byte) (data.charAt(index) - '0');
-                        layer.set(x, y, blockType);
-
-                        index++;
-                    }
-                }
-                layers.add(layer);
-                layerNum++;
-            }
-            
-            // layers.get(0).addAsset(new Entity(new AABB(0, -2, 50, 3), "assets/grass03.png"));
-            // layers.get(0).addAsset(new Entity(new AABB(0, -0.3f, 50, 0.5f), "assets/set_grass1.png"));
-            // layers.get(2).addAsset(new Entity(new AABB(0, 2, 70, 10), "assets/l2.png"));
-
-            fileReader.close();
-            this.name = name;
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-            load("selector");
+        for (String layer_data : level_data) {
+            Layer layer = new Layer(this);
+            layer.load(layer_data);
+            layers.add(layer);
         }
+
+        layerNum = level_data.length;
+
+        layers.get(0).addAsset(new Entity(new AABB(0, -2, 50, 3), "assets/grass03.png"));
+        layers.get(0).addAsset(new Entity(new AABB(0, -0.3f, 50, 0.5f), "assets/set_grass1.png"));
+        layers.get(2).addAsset(new Entity(new AABB(0, 2, 70, 10), "assets/l2.png"));
     }
 }

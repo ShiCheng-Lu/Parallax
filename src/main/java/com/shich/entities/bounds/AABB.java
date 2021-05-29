@@ -23,6 +23,8 @@ public class AABB { // axis aligned bounding box
     }
 
     public boolean getCollision(AABB other) {
+        if (other == null) return false;
+
         Vector3f distance = new Vector3f();
 
         distance.add(other.center).sub(center);
@@ -101,8 +103,9 @@ public class AABB { // axis aligned bounding box
         return new Collision(true, this, cancel_dir, t_hit_near, distance);
     }
 
-    public void resolveCollision(Vector3f vel, ArrayList<AABB> targets) {
-        
+    public boolean resolveCollision(Vector3f vel, ArrayList<AABB> targets) {
+        boolean ret_val = false;
+
         ArrayList<Collision> collisions = new ArrayList<>();
 
         for (AABB target : targets) {
@@ -115,30 +118,16 @@ public class AABB { // axis aligned bounding box
             Collision new_c = c.target.getCollision(this, vel);
             if (new_c.intersects) {
                 vel.sub(new_c.normal.mul(vel).mul(1 - new_c.time));
+
+                // upward collision
+                if (new_c.normal.y < 0) {
+                    ret_val = true;
+                }
             }
         }
+
+        return ret_val;
     }
-
-    // public boolean correctPosition(Collision collision) {
-    // if (collision.intersects) {
-
-    // }
-    // return false;
-    // }
-
-    // public boolean correctPositionY(AABB other, Collision collision) {
-    // if (collision.intersects) {
-    // if (collision.distance.x > collision.distance.y) {
-    // if (center.y > other.center.y) {
-    // center.sub(0, collision.distance.y, 0);
-    // } else {
-    // center.add(0, collision.distance.y, 0);
-    // }
-    // return true;
-    // }
-    // }
-    // return false;
-    // }
 
     public boolean contains(Vector3f pos) {
         Vector3f distance = new Vector3f();

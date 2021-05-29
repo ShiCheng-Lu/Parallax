@@ -192,7 +192,7 @@ public class Input {
 
     public void update() {
         for (int i = GLFW_KEY_SPACE; i < GLFW_KEY_LAST; ++i) {
-            key_state[i] = glfwGetKey(window.window, i) == GLFW_PRESS;
+            key_state[i] = false;
         }
         for (int i = 0; i < GLFW_MOUSE_BUTTON_LAST; ++i) {
             button_action[i] = false;

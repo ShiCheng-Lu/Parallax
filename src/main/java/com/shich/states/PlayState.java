@@ -18,7 +18,6 @@ public class PlayState extends GameState {
         super(gsm);
         level = new Level();
         player = new Player(new AABB(0, 0, 1, 1), level);
-        player.setPos(0, 0, 0);
         player.setLevel(level);
         gsm.setCameraOffset(new Vector3f(0, 4, 0));
     }

@@ -94,6 +94,10 @@ public class Main implements Runnable {
         window.destroy();
     }
 
+    public void close() {
+        destroy();
+    }
+
     public static void main(String[] args) {
         new Main().start();
     }

@@ -1,15 +1,18 @@
 package com.shich.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class Files {
     public static String readFile(String file_path) {
         StringBuilder result = new StringBuilder();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File("res/" + file_path)))) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File("res/" + file_path)));
             String line = "";
             while ((line = reader.readLine()) != null) {
                 result.append(line).append("\n");
@@ -20,7 +23,12 @@ public class Files {
         return result.toString();
     }
 
-    public static void writeFile(String content) {
-        // write to file
+    public static void writeFile(String file_path, String content) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File("res/" + file_path)));
+            writer.write(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

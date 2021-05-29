@@ -1,7 +1,15 @@
 package com.shich.entities;
 
+import java.util.ArrayList;
+
 import com.shich.entities.bounds.AABB;
+import com.shich.entities.move.Dash;
+import com.shich.entities.move.Jump;
+import com.shich.entities.move.Movement;
+import com.shich.entities.render.Model;
 import com.shich.entities.render.Renderer;
+import com.shich.entities.render.Texture;
+import com.shich.level.Layer;
 import com.shich.level.Level;
 import com.shich.util.Input;
 import com.shich.util.KEYS;
@@ -10,67 +18,94 @@ import com.shich.util.Timer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class Player extends DynamicEntity {
+public class Player {
+
+    AABB bounds;
+    Dash dash;
+    Jump jump;
+    Movement move;
+    
+    Model model;
+    Texture text;
+
+    Level level;
 
     public Player(AABB bounds, Level level) {
-        super(bounds, level);
-        renderSetup("player.png");
+        this.bounds = bounds;
+        this.move = new Movement(bounds.center, new Vector3f(), new Vector3f());
+        this.dash = new Dash(move);
+        this.jump = new Jump(move, 4, 5);
+        this.jump.calc_gravity(10);
 
-        velocityMax = new Vector3f(9, 18, 0);
-        accerlation = new Vector3f(2, 2, 0);
-
-        gravity = (8 * jumpHeight * velocityMax.x * velocityMax.x) / (jumpDist * jumpDist);
-        jumpVel = jumpHeight *4 * velocityMax.x / jumpDist;
-        
-        // additional tolerance
+        this.model = new Model(bounds.half_extent);
+        this.text = new Texture("player.png");
     }
 
+    public void collide(Timer timer) {
+        ArrayList<AABB> targets = new ArrayList<>();
 
-    public void input(Input input) {
-        if (input.isKeyDown(KEYS.LEFT)) {
-            velocity.x = Math.max(velocity.x - accerlation.x, -velocityMax.x);
-        }
-        if (input.isKeyDown(KEYS.RIGHT)) {
-            velocity.x = Math.min(velocity.x + accerlation.x, velocityMax.x);
-        }
-        if (input.isKeyPressed(KEYS.UP)) {
-            velocity.y = 10;
-        }
-        if (input.isKeyDown(KEYS.DOWN)) {
-            velocity.y = Math.max(velocity.y - accerlation.y, -velocityMax.x);
-        }
-        if (input.isButtonPressed(KEYS.MOUSE_RIGHT)) {
-            System.out.println(position);
-        }
+        move.vel.mul(timer.delta);
 
-    }
+        for (int i = 0; i < level.layerNum; ++i) {
+            Vector3f mod_pos = move.pos.div(i + 1, new Vector3f());
+            Layer layer = level.getLayer(i);
 
+            for (int x = (int) mod_pos.x - 2; x <= (int) mod_pos.x + 2; ++x) {
+                for (int y = (int) mod_pos.y - 2; y <= (int) mod_pos.y + 2; ++y) {
     
-
-    public void update(Timer timer) {
-        
-        super.update(timer);
-        
-        if (position.y < 0) {
-            velocity.y = 0;
-            position.y = 0;
-        } else {
-            // velocity.y -= gravity * timer.delta;
+                    byte type = layer.get(x, y);
+                    if (type == (byte) 1 || (type == (byte) 2 && mod_pos.y >= y + 1)) {
+                        targets.add(layer.getBoundingBox(x, y));
+                    }
+                }
+            }
         }
-        velocity.x *= 0.8f;
-    }
 
+        if (bounds.resolveCollision(move.vel, targets)) {
+            jump.setCanJump(true);
+        }
+        
+        move.pos.add(move.vel);
+        move.vel.div(timer.delta);
+    }
+    
     public void setLevel(Level level) {
         this.level = level;
     }
 
-    // public void render(Renderer renderer) {
-    //     Matrix4f trans = new Matrix4f();
-    //     if (velocity.x > 0) {
-    //         trans.reflect(new Vector3f(0, 1, 0), new Vector3f());
-    //     }
-    //     trans.translate(position);
+    public Vector3f getPos() {
+        return move.pos;
+    }
 
-    //     renderer.render(trans, model, texture);
-    // }
+    public void input(Input input) {
+        jump.input(input);
+        dash.input(input);
+        move.input(input);
+    }
+
+    public void update(Timer timer) {
+        if (bounds.getCollision(level.win_bounds)) {
+            System.out.println("YOU WIN");
+        }
+
+        jump.update(timer);
+        dash.update(timer);
+
+        collide(timer);
+
+        move.update(timer);
+    }
+
+    public void render(Renderer renderer) {
+        Matrix4f trans = new Matrix4f();
+        
+        trans.translate(move.pos);
+
+        if (move.facing == -1) {
+            trans.reflect(new Vector3f(1, 0, 0), new Vector3f());
+        }
+
+        trans.scale(1.2f);
+        renderer.render(trans, model, text);
+    }
 }
