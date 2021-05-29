@@ -25,7 +25,9 @@ public class Files {
 
     public static void writeFile(String file_path, String content) {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File("res/" + file_path)));
+            File file = new File("res/" + file_path);
+            file.createNewFile();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(content);
         } catch (IOException e) {
             e.printStackTrace();
