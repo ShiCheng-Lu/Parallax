@@ -10,15 +10,18 @@ public class Camera {
     private Matrix4f transform;
     private Matrix4f projection;
 
+    private float scale = 128;
+    private int width, height;
+
     private Window window;
 
     public Camera(Window window) {
         this.window = window;
-        int width = window.getWidth();
-        int height = window.getHeight();
+        width = window.getWidth();
+        height = window.getHeight();
         offset = new Vector3f();
         translate = new Vector3f();
-        transform = new Matrix4f().setOrtho2D(-width / 2, width / 2, -height / 2, height / 2).scale(128);
+        transform = new Matrix4f().setOrtho2D(-width / 2, width / 2, -height / 2, height / 2).scale(scale);
     }
 
     public void setOffset(Vector3f offset) {
@@ -39,7 +42,14 @@ public class Camera {
     }
 
     public void setProjection(int width, int height) {
-        projection = new Matrix4f().setOrtho2D(-width / 2, width / 2, -height / 2, height / 2).scale(128);
+        this.width = width;
+        this.height = height;
+        transform = new Matrix4f().setOrtho2D(-width / 2, width / 2, -height / 2, height / 2).scale(scale);
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
+        transform = new Matrix4f().setOrtho2D(-width / 2, width / 2, -height / 2, height / 2).scale(scale);
     }
 
     public Matrix4f getProjection() {
@@ -48,8 +58,8 @@ public class Camera {
 
     public Vector3f reverseProjection(Vector3f input_pos) {
         Vector3f result = new Vector3f();
-        // input_pos.div(128, result);
-        // translate.sub(result, result);
+        input_pos.div(scale, result);
+        result.sub(translate, result);
         return result;
     }
 

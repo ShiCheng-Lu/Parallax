@@ -8,6 +8,7 @@ import com.shich.level.Block;
 import com.shich.states.GameStateManager;
 import com.shich.util.Camera;
 import com.shich.util.Input;
+import com.shich.util.KEYS;
 import com.shich.util.Timer;
 import com.shich.util.Window;
 
@@ -50,6 +51,14 @@ public class Main implements Runnable {
         gsm = new GameStateManager(camera);
         Block.init();
     }
+    
+    public void destroy() {
+        window.destroy();
+    }
+
+    public void close() {
+        destroy();
+    }
 
     @Override
     public void run() {
@@ -65,6 +74,10 @@ public class Main implements Runnable {
     }
 
     public void input(Input input) {
+        if (input.isButtonPressed(KEYS.MOUSE_RIGHT)) {
+            System.out.println(input.mouse_pos);
+        }
+
         gsm.input(input);
         window.input(input);
     }
@@ -86,12 +99,7 @@ public class Main implements Runnable {
 
     public void render(Renderer renderer) {
         gsm.render(renderer);
-
         window.swapBuffers();
-    }
-
-    public void destroy() {
-        window.destroy();
     }
 
     public static void main(String[] args) {

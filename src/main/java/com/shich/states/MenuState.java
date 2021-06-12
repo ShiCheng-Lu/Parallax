@@ -1,14 +1,17 @@
 package com.shich.states;
 
 import com.shich.entities.Button;
+import com.shich.entities.Entity;
 import com.shich.entities.bounds.AABB;
 import com.shich.entities.render.Renderer;
 import com.shich.util.Input;
 import com.shich.util.Timer;
 
+import org.joml.Vector3f;
+
 public class MenuState extends GameState {
 
-    Button title;
+    Entity title;
 
     Button enterPlayState;
     Button enterCreateState;
@@ -16,23 +19,30 @@ public class MenuState extends GameState {
     public MenuState(GameStateManager gsm) {
         super(gsm);
         
-        title = new Button(new AABB(0, 5, 25, 7), "menu/title.png");
+        title = new Entity(new AABB(0, 0.6f, 1.4f, 0.6f), "menu/title.png", true);
 
-        enterPlayState = new Button(new AABB(0, -1, 12, 3), "menu/playButton.png") {
+        enterPlayState = new Button(new AABB(0, -0.1f, 0.8f, 0.3f), "menu/playButton.png", true) {
             @Override
             public void released() {
                 PlayState ps = new PlayState(MenuState.this.gsm);
-                ps.loadLevel("level-3");
+                ps.loadLevel("level-0");
                 MenuState.this.gsm.addState(ps);
             }
         };
 
-        enterCreateState = new Button(new AABB(0, -4, 12, 3), "menu/levelEditorButton.png") {
+        enterCreateState = new Button(new AABB(0, -0.5f, 0.8f, 0.3f), "menu/levelEditorButton.png", true) {
             @Override
             public void released() {
-                // gsm.addState(new CreateState(gsm));
+                CreateState cs = new CreateState(MenuState.this.gsm);
+                MenuState.this.gsm.addState(cs);
             }
         };
+    }
+
+    @Override
+    public void focus() {
+        gsm.camera.setScale(128);
+        gsm.camera.setOffset(new Vector3f(0, 0, 0));
     }
 
     @Override

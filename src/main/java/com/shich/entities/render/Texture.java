@@ -21,12 +21,11 @@ import org.lwjgl.stb.STBImage;
 public class Texture {
 
     private int texture_id;
-    private IntBuffer width, height, channels;
 
     public Texture(String texture_file) {
-        width = BufferUtils.createIntBuffer(1);
-        height = BufferUtils.createIntBuffer(1);
-        channels = BufferUtils.createIntBuffer(1);
+        IntBuffer width = BufferUtils.createIntBuffer(1);
+        IntBuffer height = BufferUtils.createIntBuffer(1);
+        IntBuffer channels = BufferUtils.createIntBuffer(1);
 
         ByteBuffer image = STBImage.stbi_load("res/graphics/" + texture_file, width, height, channels, 0);
 

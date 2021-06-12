@@ -5,10 +5,10 @@ import com.shich.entities.render.Renderer;
 import com.shich.util.Input;
 import com.shich.util.KEYS;
 
-public class Button extends StaticEntity {
+public class Button extends Entity {
 
     private boolean canActivate;
-    private boolean hovered;
+    public boolean hovered;
 
     /**
      * create a button
@@ -16,9 +16,13 @@ public class Button extends StaticEntity {
      * @param bounds
      * @param gs
      */
-    public Button(AABB bounds, String texture_file) {
-        super(bounds, texture_file);
+    public Button(AABB bounds, String texture_file, boolean is_static) {
+        super(bounds, texture_file, is_static);
         hovered = false;
+    }
+
+    public Button(AABB bounds, String texture_file) {
+        this(bounds, texture_file, false);
     }
 
     /**
@@ -28,7 +32,7 @@ public class Button extends StaticEntity {
      * @param mouse mouse inputs
      */
     public void input(Input input) {
-        if (bounding_box.contains(input.mouse_pos)) {
+        if (bounding_box.contains(input.mouse_pos_raw)) {
             if (input.isButtonPressed(KEYS.MOUSE_LEFT)) {
                 canActivate = true;
                 pressed();

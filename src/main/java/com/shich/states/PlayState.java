@@ -10,17 +10,17 @@ import org.joml.Vector3f;
 
 public class PlayState extends GameState {
 
+    protected Pause pause;
+
     public Player player;
-    private Level level;
-    private int selectedLevel;
+    protected Level level;
 
     public PlayState(GameStateManager gsm) {
         super(gsm);
         level = new Level();
         player = new Player(new AABB(0, 0, 1, 1), level);
-        player.setPos(0, 0, 0);
         player.setLevel(level);
-        gsm.setCameraOffset(new Vector3f(0, 4, 0));
+        pause = new Pause(gsm);
     }
 
     public void loadLevel(String levelName) {
@@ -29,24 +29,42 @@ public class PlayState extends GameState {
     }
 
     @Override
+    public void focus() {
+        gsm.camera.setScale(128);
+        gsm.camera.setOffset(new Vector3f(0, 4, 0));
+    }
+
+    @Override
     public void input(Input input) {
-        // level selector
-        // if (level.name == "selector") {
-        //     if (input.isKeyPressed(KEYS.ACTION) && selectedLevel >= 0) {
-        //         loadLevel("level-" + selectedLevel);
-        //     }
-        // }
+        pause.input(input);
+        if (pause.paused) {
+            return;
+        }
+
         player.input(input);
     }
 
     @Override
     public void update(Timer timer) {
+        if (pause.paused) {
+            pause.update(timer);
+            return;
+        }
         player.update(timer);
-        gsm.setCameraPosition(player.getPos());
+        gsm.camera.setPosition(player.getPos());
+
+        if (player.getBoundingBox().getCollision(level.win_bounds)) {
+            // load next level
+            int newlevel = Integer.parseInt(level.name.split("-")[1]) + 1;
+            level = new Level();
+            loadLevel("level-" + newlevel);
+            System.out.println(level.name);
+        }
     }
 
     @Override
     public void render(Renderer renderer) {
         level.render(renderer, player);
+        pause.render(renderer);
     }
 }
