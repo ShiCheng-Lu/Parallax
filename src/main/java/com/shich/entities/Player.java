@@ -6,13 +6,12 @@ import com.shich.entities.bounds.AABB;
 import com.shich.entities.move.Dash;
 import com.shich.entities.move.Jump;
 import com.shich.entities.move.Movement;
+import com.shich.entities.render.Animation;
 import com.shich.entities.render.Model;
 import com.shich.entities.render.Renderer;
-import com.shich.entities.render.Texture;
 import com.shich.level.Layer;
 import com.shich.level.Level;
 import com.shich.util.Input;
-import com.shich.util.KEYS;
 import com.shich.util.Timer;
 
 import org.joml.Matrix4f;
@@ -20,15 +19,15 @@ import org.joml.Vector3f;
 
 public class Player {
 
-    AABB bounds;
-    Dash dash;
-    Jump jump;
-    Movement move;
+    private AABB bounds;
+    private Dash dash;
+    private Jump jump;
+    private Movement move;
     
-    Model model;
-    Texture text;
+    private Model model;
+    private Animation anim;
 
-    Level level;
+    private Level level;
 
     public Player(AABB bounds, Level level) {
         this.bounds = bounds;
@@ -38,14 +37,12 @@ public class Player {
         this.jump.calc_gravity(10);
 
         this.model = new Model(bounds.half_extent);
-        this.text = new Texture("player.png");
+        this.anim = new Animation("player", 4, 0.1f);
     }
 
     public void collide(Timer timer) {
         ArrayList<AABB> targets = new ArrayList<>();
-
         move.vel.mul(timer.delta);
-
         for (int i = 0; i < level.layerNum; ++i) {
             Vector3f mod_pos = move.pos.div(i + 1, new Vector3f());
             Layer layer = level.getLayer(i);
@@ -60,13 +57,18 @@ public class Player {
                 }
             }
         }
-
         if (bounds.resolveCollision(move.vel, targets)) {
             jump.setCanJump(true);
         }
-        
         move.pos.add(move.vel);
         move.vel.div(timer.delta);
+
+        if (move.pos.y < 0) {
+            jump.can_jump = true;
+            move.pos.y = 0;
+            move.vel.y = 0;
+            move.acc.y = 0;
+        }
     }
     
     public void setLevel(Level level) {
@@ -84,28 +86,28 @@ public class Player {
     }
 
     public void update(Timer timer) {
-        if (bounds.getCollision(level.win_bounds)) {
-            System.out.println("YOU WIN");
+        if (Math.abs(move.vel.x) > 0.01f) {
+            anim.update(timer, true);
+        } else {
+            anim.set_frame(0);
         }
-
         jump.update(timer);
         dash.update(timer);
-
-        collide(timer);
-
+        this.collide(timer);
         move.update(timer);
     }
 
     public void render(Renderer renderer) {
         Matrix4f trans = new Matrix4f();
-        
         trans.translate(move.pos);
-
         if (move.facing == -1) {
             trans.reflect(new Vector3f(1, 0, 0), new Vector3f());
         }
-
         trans.scale(1.2f);
-        renderer.render(trans, model, text);
+        renderer.render(trans, model, anim);
+    }
+
+    public AABB getBoundingBox() {
+        return bounds;
     }
 }

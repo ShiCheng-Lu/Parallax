@@ -17,6 +17,7 @@ public class Files {
             while ((line = reader.readLine()) != null) {
                 result.append(line).append("\n");
             }
+            reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -29,6 +30,7 @@ public class Files {
             file.createNewFile();
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(content);
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

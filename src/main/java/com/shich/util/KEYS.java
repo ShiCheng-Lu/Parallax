@@ -1,7 +1,5 @@
 package com.shich.util;
 
-import static org.lwjgl.glfw.GLFW.*;
-
 public enum KEYS {
     ACTION,
     LEFT,
@@ -13,8 +11,8 @@ public enum KEYS {
     FULLSCREEN,
     EXIT,
     MOUSE_LEFT,
-    MOUSE_MIDDLE,
     MOUSE_RIGHT,
+    MOUSE_MIDDLE,
     ;
     public static final int size;
     static {

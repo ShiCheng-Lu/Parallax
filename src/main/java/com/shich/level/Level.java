@@ -1,11 +1,6 @@
 package com.shich.level;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import com.shich.entities.Entity;
 import com.shich.entities.Player;
@@ -48,19 +43,8 @@ public class Level {
         layers.get(layer).set(x, y, type);
     }
 
-    public void remove(int layer, int x, int y) {
-        if (layer >= 0 && layer < layerNum) {
-            layers.get(layer).set(x, y, (byte) 0);
-        }
-    }
-
-    public void loadNext() {
-        // if (parent instanceof PlayState) {
-        //     PlayState p = (PlayState) parent;
-        //     p.player.setPos(0, 0);
-        //     int newlevel = Integer.parseInt(name.split("-")[1]) + 1;
-        //     load("level-" + newlevel);
-        // }
+    public void setSafe(int layer, int x, int y, byte type) {
+        layers.get(layer).setSafe(x, y, type);
     }
 
     public void save(String name) {
@@ -84,7 +68,8 @@ public class Level {
         layerNum = level_data.length;
 
         layers.get(0).addAsset(new Entity(new AABB(0, -2, 50, 3), "assets/grass03.png"));
-        layers.get(0).addAsset(new Entity(new AABB(0, -0.3f, 50, 0.5f), "assets/set_grass1.png"));
+        // layers.get(0).addAsset(new Entity(new AABB(0, -0.3f, 50, 0.5f), "assets/set_grass1.png"));
         layers.get(2).addAsset(new Entity(new AABB(0, 2, 70, 10), "assets/l2.png"));
+        this.name = name;
     }
 }

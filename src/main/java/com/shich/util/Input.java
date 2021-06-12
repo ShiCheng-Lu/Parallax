@@ -21,6 +21,7 @@ public class Input {
     private boolean[] key_state = new boolean[GLFW_KEY_LAST];
     private boolean[] button_action = new boolean[GLFW_MOUSE_BUTTON_LAST];
     public Vector3f mouse_pos; // with z = 0;
+    public Vector3f mouse_pos_raw;
     public Camera camera;
 
     public int max_binding = 5;
@@ -32,6 +33,7 @@ public class Input {
         this.camera = camera;
 
         mouse_pos = new Vector3f();
+        mouse_pos_raw = new Vector3f();
 
         key_callback = new GLFWKeyCallback() {
             @Override
@@ -40,6 +42,7 @@ public class Input {
                     key_state[key] = true;
                 }
             }
+
             public void close() {
                 super.close();
             }
@@ -60,6 +63,7 @@ public class Input {
                     button_action[button] = true;
                 }
             }
+
             public void close() {
                 super.close();
             }
@@ -78,8 +82,12 @@ public class Input {
             public void invoke(long window, double xpos, double ypos) {
                 float width = Input.this.window.getWidth();
                 float height = Input.this.window.getHeight();
+
+                mouse_pos_raw.x = (float) (xpos * 2 / width - 1);
+                mouse_pos_raw.y = (float) (1 - ypos * 2 / height);
+
                 mouse_pos = Input.this.camera
-                        .reverseProjection(new Vector3f((float) -xpos + width / 2, (float) ypos - height / 2, 0));
+                        .reverseProjection(new Vector3f((float) (xpos - width / 2.0), (float) (height / 2.0 - ypos), 0));
             }
 
             public void close() {
@@ -119,6 +127,20 @@ public class Input {
         }
     }
 
+    public void saveKeyBind(String file) {
+        String out = "";
+        KEYS[] keys = KEYS.values();
+
+        for (int i = 0; i < KEYS.size; ++i) {
+            for (int k : bindings.get(keys[i])) {
+                out += k + " ";
+            }
+            out += "\n";
+        }
+        Files.writeFile("input/" + file, out);
+        System.out.println("saved");
+    }
+
     public void addKeyBind(KEYS key, int binding) {
         bindings.get(key).add(binding);
     }
@@ -127,7 +149,6 @@ public class Input {
         bindings.get(key).remove(binding);
     }
 
-    
     public boolean isGLFW_KeyDown(int glfw_key) {
         return glfwGetKey(window.window, glfw_key) == GLFW_PRESS;
     }
@@ -153,7 +174,7 @@ public class Input {
         }
         return false;
     }
-    
+
     public boolean isKeyDown(KEYS key) {
         for (int glfw_key : bindings.get(key)) {
             if (isGLFW_KeyDown(glfw_key)) {
@@ -191,6 +212,10 @@ public class Input {
     }
 
     public void update() {
+        if (isButtonPressed(KEYS.MOUSE_MIDDLE)) {
+            saveKeyBind("active");
+        }
+
         for (int i = GLFW_KEY_SPACE; i < GLFW_KEY_LAST; ++i) {
             key_state[i] = false;
         }

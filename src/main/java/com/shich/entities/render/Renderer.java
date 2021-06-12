@@ -17,7 +17,6 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import com.shich.util.Camera;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 public class Renderer {
 
@@ -30,7 +29,13 @@ public class Renderer {
     }
 
     public void render(Matrix4f trans, Model model, Texture texture) {
-        camera.getProjection().mul(trans, trans);
+        render(trans, model, texture, false);
+    }
+
+    public void render(Matrix4f trans, Model model, Texture texture, boolean absolute) {
+        if (!absolute) {
+            camera.getProjection().mul(trans, trans);
+        }
 
         shader.bind();
         texture.bind();

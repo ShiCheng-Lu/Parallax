@@ -20,5 +20,6 @@ public class GameState {
     public void update(Timer timer) {}
 
     public void render(Renderer renderer) {}
-    
+
+    public void focus() {}   
 }

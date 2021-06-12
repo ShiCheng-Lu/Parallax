@@ -17,16 +17,28 @@ public class Entity {
     protected Texture texture;
     
     protected Vector3f position;
+    protected boolean is_static;
 
 
     public Entity(AABB bounds) {
-        bounding_box = bounds;
-        position = bounds.center;
+        this(bounds, null, false);
     }
 
     public Entity(AABB bounds, String texture_file) {
-        this(bounds);
-        renderSetup(texture_file);
+        this(bounds, texture_file, false);
+    }
+
+    public Entity(AABB bounds, boolean is_static) {
+        this(bounds, null, is_static);
+    }
+
+    public Entity(AABB bounds, String texture_file, boolean is_static) {
+        bounding_box = bounds;
+        position = bounds.center;
+        if (texture_file != null) {
+            renderSetup(texture_file);
+        }
+        this.is_static = is_static;
     }
 
     public void renderSetup(String texture_file) {
@@ -44,7 +56,7 @@ public class Entity {
         Matrix4f trans = new Matrix4f();
         trans.translate(position);
         
-        renderer.render(trans, model, texture);
+        renderer.render(trans, model, texture, is_static);
     }
 
     public float getX() {

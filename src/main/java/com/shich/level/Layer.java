@@ -6,6 +6,7 @@ import com.shich.entities.Entity;
 import com.shich.entities.bounds.AABB;
 import com.shich.entities.render.Renderer;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Layer {
@@ -94,7 +95,17 @@ public class Layer {
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
                 if (tiles[x][y] != 0) {
-                    Block.render(renderer, tiles[x][y], offset.add(x, y, 0, new Vector3f()));
+                    Block.render(renderer, tiles[x][y], new Matrix4f().translate(offset).translate(x, y, 0));
+                }
+            }
+        }
+    }
+
+    public void renderBounds(Renderer renderer) {
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                if (tiles[x][y] != 0) {
+                    Block.render(renderer, tiles[x][y], new Matrix4f().translate(x * scale, y * scale, 0).scale(scale * 2 - 1));
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.shich.level;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import com.shich.entities.Entity;
@@ -11,7 +12,8 @@ import org.joml.Vector3f;
 
 public class Block extends Entity {
 
-    private static Hashtable<Byte, Block>block_set = new Hashtable<Byte, Block>();
+    private static Hashtable<Byte, Block> block_set = new Hashtable<Byte, Block>();
+    private static ArrayList<Byte> id_list = new ArrayList<Byte>();
     private byte id;
 
     public Block(Byte id, String texture_file) {
@@ -24,16 +26,15 @@ public class Block extends Entity {
         return id;
     }
 
-    public static void render(Renderer renderer, byte id, Vector3f offset) {
+    public static void render(Renderer renderer, byte id, Matrix4f trans) {
         Block block = block_set.get(id);
         if (block != null) {
-            block.render(renderer, offset);
+            block.render(renderer, trans);
         }
-        
     }
 
-    public void render(Renderer renderer, Vector3f offset) {
-        renderer.render(new Matrix4f().translate(offset), model, texture);
+    public void render(Renderer renderer, Matrix4f trans) {
+        renderer.render(trans, model, texture);
     }
 
     public static Block getBlock(byte id) {
@@ -42,8 +43,13 @@ public class Block extends Entity {
 
     public static void init() {
         byte[] types = new byte[] {0, 1, 2, 8, 9};
-        for (byte i : types) {
-            new Block(i, "block/block-" + i + ".png");
+        for (byte t : types) {
+            id_list.add(t);
+            new Block(t, "block/block-" + t + ".png");
         }
     }
-} 
+
+    public static ArrayList<Byte> id_list() {
+        return id_list;
+    }
+ } 
