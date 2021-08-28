@@ -2,7 +2,7 @@ package com.shich.game.states;
 
 import java.util.ArrayList;
 
-import com.shich.game.render.Renderer;
+import com.shich.game.entities.render.Renderer;
 import com.shich.game.util.Camera;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
@@ -23,20 +23,20 @@ public class GameStateManager {
     }
 
     public void update(Timer timer) {
-        states.get(0).update(timer);
+        if (!states.isEmpty()) states.get(0).update(timer);
     }
 
     public void input(Input input) {
         states.get(0).input(input);
         if (input.isKeyReleased(input.EXIT)) {
-            remove(0);
+            if (!states.isEmpty()) remove(0);
             setCameraOffset(new Vector3f());
             setCameraPosition(new Vector3f());
         }
     }
 
     public void render(Renderer renderer) {
-        states.get(0).render(renderer);
+        if (!states.isEmpty()) states.get(0).render(renderer);
     }
 
     public void addState(GameState gs) {

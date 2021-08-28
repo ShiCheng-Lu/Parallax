@@ -1,4 +1,4 @@
-package com.shich.game.render;
+package com.shich.game.entities.render;
 
 import static org.lwjgl.opengl.GL20.*;
 

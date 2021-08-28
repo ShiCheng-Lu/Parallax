@@ -1,17 +1,20 @@
 package com.shich.game.entities;
 
-import com.shich.game.collision.AABB;
+import com.shich.game.entities.bounds.AABB;
+import com.shich.game.entities.render.Model;
+import com.shich.game.entities.render.Texture;
 import com.shich.game.level.Level;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 
 import org.joml.Vector3f;
 
-public class Player extends Mob {
+public class Player extends DynamicEntity {
 
     public Player(AABB bounds, Level level) {
         super(bounds, level);
-        renderSetup("player.png");
+        this.model = new Model(bounds.half_extent);
+        this.texture = new Texture("player.png");
 
         velocityMax = new Vector3f(9, 18, 0);
         accerlation = new Vector3f(2, 2, 0);
@@ -29,8 +32,8 @@ public class Player extends Mob {
         // coyoteTime = 3;
 
         gravity = (8 * jumpHeight * velocityMax.x * velocityMax.x) / (jumpDist * jumpDist);
-        jumpVel = jumpHeight *4 * velocityMax.x / jumpDist;
-        
+        jumpVel = jumpHeight * 4 * velocityMax.x / jumpDist;
+
         // additional tolerance
     }
 
@@ -108,12 +111,9 @@ public class Player extends Mob {
 
     }
 
-    
-
     public void update(Timer timer) {
-        
         super.update(timer);
-        
+
         if (position.y < 0) {
             velocity.y = 0;
             position.y = 0;

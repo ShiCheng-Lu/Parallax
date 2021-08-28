@@ -1,21 +1,24 @@
 package com.shich.game.states;
 
-import com.shich.game.render.Renderer;
+import com.shich.game.entities.render.Renderer;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 
-public abstract class GameState {
+public class GameState {
     
     protected GameStateManager gsm;
+    protected Pause pause;
 
     public GameState(GameStateManager gsm) {
         this.gsm = gsm;
     }
 
-    public abstract void input(Input input);
+    public void input(Input input) {
+        if (pause != null) pause.input(input);
+    }
 
-    public abstract void update(Timer timer);
+    public void update(Timer timer) {}
 
-    public abstract void render(Renderer renderer);
+    public void render(Renderer renderer) {}
     
 }

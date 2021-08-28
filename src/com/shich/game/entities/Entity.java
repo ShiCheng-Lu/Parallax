@@ -1,9 +1,9 @@
 package com.shich.game.entities;
 
-import com.shich.game.collision.AABB;
-import com.shich.game.render.Model;
-import com.shich.game.render.Renderer;
-import com.shich.game.render.Texture;
+import com.shich.game.entities.bounds.AABB;
+import com.shich.game.entities.render.Model;
+import com.shich.game.entities.render.Renderer;
+import com.shich.game.entities.render.Texture;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 
@@ -11,38 +11,21 @@ import org.joml.Vector3f;
 
 public class Entity {
 
-    public AABB bounding_box;
-    protected Vector3f position;
-
+    protected AABB bounding_box;
     protected Model model;
     protected Texture texture;
+
+    protected Vector3f position;
 
     public Entity(AABB bounds) {
         bounding_box = bounds;
         position = bounds.center;
     }
 
-    public Entity(AABB bounds, String texture_file) {
+    public Entity(AABB bounds, Model model, Texture texture) {
         this(bounds);
-        renderSetup(texture_file);
-    }
-
-    public void renderSetup(String texture_file) {
-        float width = bounding_box.half_extent.x;
-        float height = bounding_box.half_extent.y;
-
-        float[] vertices = new float[] { 
-            -width, height, 0, 
-            width, height, 0,
-            width, -height, 0,
-            -width, -height, 0, };
-
-        float[] texCoords = new float[] { 0, 0, 1, 0, 1, 1, 0, 1, };
-
-        int[] indices = new int[] { 0, 1, 2, 2, 3, 0, };
-
-        this.model = new Model(vertices, texCoords, indices);
-        this.texture = new Texture(texture_file);
+        this.model = model;
+        this.texture = texture;
     }
 
     public void input(Input input) {
@@ -77,5 +60,9 @@ public class Entity {
 
     public void setPos(Vector3f direction) {
         position.set(direction);
+    }
+
+    public void resolveCollision(Entity other) {
+        bounding_box
     }
 }

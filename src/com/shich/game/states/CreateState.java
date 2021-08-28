@@ -1,10 +1,11 @@
 package com.shich.game.states;
 
+import com.shich.game.entities.Button;
 import com.shich.game.entities.Player;
+import com.shich.game.entities.render.Renderer;
 import com.shich.game.level.Block;
 import com.shich.game.level.Layer;
 import com.shich.game.level.Level;
-import com.shich.game.render.Renderer;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 

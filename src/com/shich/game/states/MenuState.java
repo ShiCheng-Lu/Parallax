@@ -1,7 +1,8 @@
 package com.shich.game.states;
 
-import com.shich.game.collision.AABB;
-import com.shich.game.render.Renderer;
+import com.shich.game.entities.Button;
+import com.shich.game.entities.bounds.AABB;
+import com.shich.game.entities.render.Renderer;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 

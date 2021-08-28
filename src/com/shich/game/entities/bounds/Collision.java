@@ -1,4 +1,4 @@
-package com.shich.game.collision;
+package com.shich.game.entities.bounds;
 
 import org.joml.Vector3f;
 

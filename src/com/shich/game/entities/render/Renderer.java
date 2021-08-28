@@ -1,4 +1,4 @@
-package com.shich.game.render;
+package com.shich.game.entities.render;
 
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
@@ -41,9 +41,9 @@ public class Renderer {
     }
 
     private void renderModel(Model model) {
-        
-        glEnable (GL_BLEND);
-        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glBindVertexArray(model.getVao());
         glEnableVertexAttribArray(0);

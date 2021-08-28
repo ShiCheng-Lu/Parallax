@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
 import com.shich.game.entities.Player;
-import com.shich.game.render.Renderer;
+import com.shich.game.entities.bounds.AABB;
+import com.shich.game.entities.render.Renderer;
 
 import org.joml.Vector3f;
 

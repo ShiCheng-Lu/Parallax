@@ -2,17 +2,18 @@ package com.shich.game.level;
 
 import java.util.ArrayList;
 
-import com.shich.game.collision.AABB;
 import com.shich.game.entities.Entity;
-import com.shich.game.render.Renderer;
+import com.shich.game.entities.bounds.AABB;
+import com.shich.game.entities.render.Model;
+import com.shich.game.entities.render.Renderer;
 
 import org.joml.Vector3f;
 
 public class Layer {
+
     protected Level level;
     public int width, height;
-    protected byte[][] tiles;
-    protected AABB[][] bounds;
+    protected Block[][] blocks;
 
     public int scale;
 
@@ -24,20 +25,18 @@ public class Layer {
         this.height = height;
         this.scale = scale;
 
-        tiles = new byte[width][height];
-        bounds = new AABB[width][height];
+        blocks = new Block[width][height];
     }
 
     public void set(int x, int y, byte type) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            tiles[x][y] = type;
-            bounds[x][y] = new AABB(x * scale, y * scale, scale * 2 - 1, scale * 2 - 1);
+            blocks[x][y] = new Block(new AABB(x * scale, y * scale, scale * 2 - 1, scale * 2 - 1), type);
         }
     }
 
-    public byte get(int x, int y) {
+    public Block get(int x, int y) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            return tiles[x][y];
+            return blocks[x][y];
         }
         return 0;
     }
@@ -45,8 +44,8 @@ public class Layer {
     public void render(Renderer renderer, Vector3f offset) {
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                if (tiles[x][y] != 0) {
-                    Block.render(renderer, tiles[x][y], offset.add(x, y, 0, new Vector3f()));
+                if (blocks[x][y].getType() != 0) { // is not empty
+                    blocks[x][y].render(renderer, offset.add(x, y, 0, new Vector3f()));
                 }
             }
         }

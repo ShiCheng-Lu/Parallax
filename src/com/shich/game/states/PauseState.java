@@ -1,6 +1,6 @@
 package com.shich.game.states;
 
-import com.shich.game.render.Renderer;
+import com.shich.game.entities.render.Renderer;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 

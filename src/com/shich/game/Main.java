@@ -2,16 +2,20 @@ package com.shich.game;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
-import com.shich.game.entities.Mob;
+import com.shich.game.entities.DynamicEntity;
+import com.shich.game.entities.Entity;
+import com.shich.game.entities.bounds.AABB;
+import com.shich.game.entities.bounds.Collision;
+import com.shich.game.entities.render.Renderer;
+import com.shich.game.entities.render.Shader;
 import com.shich.game.level.Block;
-import com.shich.game.render.Renderer;
-import com.shich.game.render.Shader;
 import com.shich.game.states.GameStateManager;
 import com.shich.game.util.Camera;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 import com.shich.game.util.Window;
 
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 public class Main implements Runnable {
@@ -62,7 +66,6 @@ public class Main implements Runnable {
         // Entity p = new Entity(new AABB(-1.0f, -1.0f, 1f, 1f), "block/block-1");
         // Entity v = new Entity(new AABB(0, 0, 1f, 1f), "block/block-1");
         // Entity z = new Entity(new AABB(0, 0, 0.1f, 0.1f), "block/block-1.png");
-        Mob.renderer = renderer;
 
         while (!window.shouldClose()) {
             // if (input.isButtonDown(input.MOUSE_LEFT)) {
@@ -101,7 +104,7 @@ public class Main implements Runnable {
             update(timer);
             render(renderer);
         }
-        destroy();
+        // destroy();
     }
 
     public void input(Input input) {
@@ -141,5 +144,4 @@ public class Main implements Runnable {
     public static void main(String[] args) {
         new Main().start();
     }
-
 }
