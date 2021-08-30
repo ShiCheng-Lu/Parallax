@@ -2,20 +2,15 @@ package com.shich.game;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
-import com.shich.game.entities.DynamicEntity;
-import com.shich.game.entities.Entity;
-import com.shich.game.entities.bounds.AABB;
-import com.shich.game.entities.bounds.Collision;
+import com.shich.game.entities.Block;
 import com.shich.game.entities.render.Renderer;
 import com.shich.game.entities.render.Shader;
-import com.shich.game.level.Block;
 import com.shich.game.states.GameStateManager;
 import com.shich.game.util.Camera;
 import com.shich.game.util.Input;
 import com.shich.game.util.Timer;
 import com.shich.game.util.Window;
 
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 public class Main implements Runnable {

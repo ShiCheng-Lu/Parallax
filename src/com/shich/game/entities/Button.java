@@ -1,33 +1,25 @@
 package com.shich.game.entities;
 
 import com.shich.game.entities.bounds.AABB;
+import com.shich.game.entities.render.Model;
 import com.shich.game.entities.render.Renderer;
+import com.shich.game.entities.render.Texture;
 import com.shich.game.util.Input;
 
-public class Button extends StaticEntity {
+public class Button extends Entity {
 
     private boolean canActivate;
     private boolean hovered;
 
-    /**
-     * create a button
-     * 
-     * @param bounds
-     * @param gs
-     */
     public Button(AABB bounds, String texture_file) {
-        super(bounds, texture_file);
+        super(bounds);
+        visual.activate(this, new Model(bounds.half_extent), new Texture(texture_file));
         hovered = false;
     }
 
-    /**
-     * handles inputs from user
-     * 
-     * @param key   key inputs
-     * @param mouse mouse inputs
-     */
     public void input(Input input) {
-        if (bounding_box.contains(input.mouse_pos)) {
+        super.input(input);
+        if (bounds.contains(input.mouse_pos)) {
             if (input.isButtonPressed(input.MOUSE_LEFT)) {
                 canActivate = true;
                 pressed();
@@ -50,9 +42,12 @@ public class Button extends StaticEntity {
         }
     }
 
-    public void renderHovered(Renderer renderer) {}
+    public void renderHovered(Renderer renderer) {
+    }
 
-    public void pressed() {}
+    public void pressed() {
+    }
 
-    public void released() {}
+    public void released() {
+    }
 }

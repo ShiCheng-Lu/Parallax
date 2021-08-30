@@ -2,15 +2,14 @@ package com.shich.game.level;
 
 import java.util.ArrayList;
 
+import com.shich.game.entities.Block;
 import com.shich.game.entities.Entity;
 import com.shich.game.entities.bounds.AABB;
-import com.shich.game.entities.render.Model;
 import com.shich.game.entities.render.Renderer;
 
 import org.joml.Vector3f;
 
 public class Layer {
-
     protected Level level;
     public int width, height;
     protected Block[][] blocks;
@@ -30,7 +29,7 @@ public class Layer {
 
     public void set(int x, int y, byte type) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
-            blocks[x][y] = new Block(new AABB(x * scale, y * scale, scale * 2 - 1, scale * 2 - 1), type);
+            blocks[x][y] = new Block(type, new AABB(x * scale, y * scale, scale * 2 - 1, scale * 2 - 1));
         }
     }
 
@@ -38,15 +37,13 @@ public class Layer {
         if (x >= 0 && x < width && y >= 0 && y < height) {
             return blocks[x][y];
         }
-        return 0;
+        return null;
     }
 
     public void render(Renderer renderer, Vector3f offset) {
         for (int x = 0; x < width; ++x) {
             for (int y = 0; y < height; ++y) {
-                if (blocks[x][y].getType() != 0) { // is not empty
-                    blocks[x][y].render(renderer, offset.add(x, y, 0, new Vector3f()));
-                }
+                blocks[x][y].render(renderer);
             }
         }
     }
@@ -57,13 +54,6 @@ public class Layer {
             e.render(renderer);
             e.getPos().sub(offset);
         }
-    }
-
-    public AABB getBoundingBox(int x, int y) {
-        if (x >= 0 && x < width && y >= 0 && y < height) {
-            return bounds[x][y];
-        }
-        return null;
     }
 
     public void addAsset(Entity e) {
