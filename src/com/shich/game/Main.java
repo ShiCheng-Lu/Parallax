@@ -103,9 +103,9 @@ public class Main implements Runnable {
     }
 
     public void input(Input input) {
-        if (input.isButtonPressed(input.MOUSE_LEFT)) {
-            System.out.println(input.mouse_pos);
-        }
+        // if (input.isButtonPressed(input.MOUSE_LEFT)) {
+        //     System.out.println(input.mouse_pos);
+        // }
 
         gsm.input(input);
         window.input(input);
@@ -121,7 +121,7 @@ public class Main implements Runnable {
         window.update(timer);
 
         if (gsm.states.isEmpty()) {
-            window.shouldClose();
+            window.setShouldClose(true);
         }
     }
 

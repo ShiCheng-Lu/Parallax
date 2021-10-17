@@ -1,34 +1,38 @@
 package com.shich.game.entities.components;
 
+import java.util.ArrayList;
+
 import com.shich.game.entities.Entity;
 import com.shich.game.entities.bounds.AABB;
+import com.shich.game.entities.bounds.Collision;
 import com.shich.game.util.Timer;
 
 public class Collidable extends Component {
 
+    private ArrayList<Entity> targets;
+
     public void update(Timer timer) {
-        // ArrayList<AABB> targets = new ArrayList<>();
+        ArrayList<Collision> collisions = new ArrayList<Collision>();
 
-        // velocity.mul(timer.delta);
+        for (Entity target : this.targets) {
+            Collision collision = target.bounds.getCollision(master.bounds, master.movable.velocity);
 
-        // for (int i = 0; i < level.layerNum; ++i) {
-        //     Vector3f mod_pos = position.div(i + 1, new Vector3f());
-        //     Layer layer = level.getLayer(i);
+            collisions.add(collision);
+        }
 
-        //     for (int x = (int) mod_pos.x - 2; x <= (int) mod_pos.x + 2; ++x) {
-        //         for (int y = (int) mod_pos.y - 2; y <= (int) mod_pos.y + 2; ++y) {
-    
-        //             byte type = layer.get(x, y);
-        //             if (type == (byte) 1 || (type == (byte) 2 && mod_pos.y >= y + 1)) {
-        //                 targets.add(layer.getBoundingBox(x, y));
-        //             }
-        //         }
-        //     }
-        // }
-
-        // bounding_box.resolveCollision(velocity, targets);
-        
+        collisions.sort(null);
+        for (Collision c : collisions) {
+            // collide and update velocity
+            Collision new_c = c.target.getCollision(master.bounds, master.movable.velocity);
+            if (new_c.intersects) {
+                master.movable.velocity.sub(new_c.normal.mul(master.movable.velocity).mul(1 - new_c.time));
+            }
+        }
         // position.add(velocity);
         // velocity.div(timer.delta);
+    }
+
+    public void setTargets(ArrayList<Entity> targets) {
+        this.targets = targets;
     }
 }

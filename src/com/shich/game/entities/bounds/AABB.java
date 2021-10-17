@@ -21,6 +21,11 @@ public class AABB { // axis aligned bounding box
         this(x, y, 0, width, height, 0);
     }
 
+    /**
+     * check if this bounding box stationarilly collide with another
+     * @param other
+     * @return
+     */
     public boolean getCollision(AABB other) {
         Vector3f distance = new Vector3f();
 
@@ -31,13 +36,19 @@ public class AABB { // axis aligned bounding box
         return (distance.x < 0 && distance.y < 0);
     }
 
-    public Collision getCollision(AABB other, Vector3f other_dir) {
+    /**
+     * check collision between moving bounding boxes
+     * @param other
+     * @param relative_velocity
+     * @return
+     */
+    public Collision getCollision(AABB other, Vector3f relative_velocity) {
 
         Vector3f original_half_extent = new Vector3f(half_extent);
         half_extent.add(other.half_extent);
 
         // do rayCollision;
-        Collision result = rayCollision(other.center, other_dir);
+        Collision result = rayCollision(other.center, relative_velocity);
 
         half_extent = original_half_extent;
 
@@ -100,25 +111,6 @@ public class AABB { // axis aligned bounding box
         return new Collision(true, this, cancel_dir, t_hit_near, distance);
     }
 
-    public void resolveCollision(Vector3f vel, ArrayList<AABB> targets) {
-        
-        ArrayList<Collision> collisions = new ArrayList<>();
-
-        for (AABB target : targets) {
-            collisions.add(target.getCollision(this, vel));
-        }
-
-        collisions.sort(null);
-        for (Collision c : collisions) {
-            // collide and update velocity
-            Collision new_c = c.target.getCollision(this, vel);
-            if (new_c.intersects) {
-                vel.sub(new_c.normal.mul(vel).mul(1 - new_c.time));
-            }
-        }
-
-    }
-
     // public boolean correctPosition(Collision collision) {
     // if (collision.intersects) {
 
@@ -140,6 +132,11 @@ public class AABB { // axis aligned bounding box
     // return false;
     // }
 
+    /**
+     * check if a point is within the bounding box
+     * @param pos
+     * @return
+     */
     public boolean contains(Vector3f pos) {
         Vector3f distance = new Vector3f();
         pos.sub(center, distance);

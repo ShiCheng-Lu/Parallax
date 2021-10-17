@@ -10,11 +10,11 @@ import com.shich.game.util.Timer;
 import org.joml.Vector3f;
 
 public class GameStateManager {
-
-    Camera camera;
     /*
      * starts / end / pause the game
      */
+
+    Camera camera;
     public ArrayList<GameState> states = new ArrayList<GameState>();
 
     public GameStateManager(Camera camera) {
@@ -23,20 +23,25 @@ public class GameStateManager {
     }
 
     public void update(Timer timer) {
-        if (!states.isEmpty()) states.get(0).update(timer);
+        if (!states.isEmpty()) {
+            states.get(0).update(timer);
+        }
     }
 
     public void input(Input input) {
         states.get(0).input(input);
+
         if (input.isKeyReleased(input.EXIT)) {
-            if (!states.isEmpty()) remove(0);
+            if (!states.isEmpty())
+                remove(0);
             setCameraOffset(new Vector3f());
             setCameraPosition(new Vector3f());
         }
     }
 
     public void render(Renderer renderer) {
-        if (!states.isEmpty()) states.get(0).render(renderer);
+        if (!states.isEmpty())
+            states.get(0).render(renderer);
     }
 
     public void addState(GameState gs) {

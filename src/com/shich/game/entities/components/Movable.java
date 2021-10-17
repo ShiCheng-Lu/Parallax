@@ -6,7 +6,7 @@ import com.shich.game.util.Timer;
 import org.joml.Vector3f;
 
 public class Movable extends Component {
-    private Vector3f velocity = new Vector3f();
+    public Vector3f velocity = new Vector3f();
     private float max_vel;
     private float acceleration;
 

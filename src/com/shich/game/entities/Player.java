@@ -26,4 +26,13 @@ public class Player extends Entity {
     public void setLevel(Level level) {
         this.level = level;
     }
+
+    public void update(Timer timer) {
+        level.getLayer(0);
+
+
+
+        this.collidable.setTargets();
+        super.update(timer);
+    }
 }
